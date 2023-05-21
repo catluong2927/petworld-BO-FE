@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -11,14 +10,7 @@ import {
 
 import UploadImage from '../../../components/upload/UploadImage';
 
-// const user = {
-//   avatar: '/assets/avatars/avatar-anika-visser.png',
-//   city: 'Los Angeles',
-//   country: 'USA',
-//   jobTitle: 'Senior Developer',
-//   name: 'Anika Visser',
-//   timezone: 'GTM-7'
-// };
+
 function AccountProfile(props) {
   console.log(props.user);
 

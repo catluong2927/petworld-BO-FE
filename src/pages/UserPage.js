@@ -73,9 +73,15 @@ export default function UserPage() {
 
   const toast = useRef(null);
 
+  const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaWV1QGNvZGVneW0uY29tIiwiaWF0IjoxNjg0NjkzNTk1LCJleHAiOjE2ODQ3MTE1OTV9.atexfoTNHQnZ5wSpVx8AhuWbJg4qTpMy_k0aeVopqZhIhZdkq-6-_Ua-OR5AP96-Xhb6WqCDHZ_cLzIkDMSOuw'
+
   useEffect(() => {
     axios
-      .get(`${USER_API}?size=${rowsPerPage}&page=${page}`)
+      .get(`${USER_API}?size=${rowsPerPage}&page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then(res => {
         setUserList(res.data.content);
         setTotalElements(res.data.totalElements)
@@ -132,10 +138,13 @@ export default function UserPage() {
   }
 
   function handleDelete(userId) {
-    console.log(userId);
     if (userId) {
       axios
-        .delete(`${USER_API}/${userId}`)
+        .delete(`${USER_API}/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then((res) => {
           toast.current.show({ severity: 'success', summary: 'Success', detail: 'Delete successfully', life: 3000 });
           setConfirmDelete(false);
@@ -176,12 +185,12 @@ export default function UserPage() {
                 />
 
                 <TableBody>
-                  {userList.map((row, index) => {
+                  {userList.map((row) => {
                     const { id, fullName, userRoleDtos, isStatus, email, avatar, userName } = row;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1}>
-                        <TableCell align="left">{index + 1}</TableCell>
+                        <TableCell align="left">{id}</TableCell>
 
                         <TableCell align="left">
                           <Avatar alt={fullName} src={avatar} />
@@ -254,7 +263,7 @@ export default function UserPage() {
       >
 
 
-        <Link to={`#`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+        <Link to={`info/${selectedUserId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
           <MenuItem>
             <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
             Info
