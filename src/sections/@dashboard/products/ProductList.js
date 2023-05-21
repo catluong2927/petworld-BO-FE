@@ -2,12 +2,14 @@ import PropTypes from 'prop-types';
 // @mui
 import { Grid } from '@mui/material';
 import ShopProductCard from './ProductCard';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 // ----------------------------------------------------------------------
-
 ProductList.propTypes = {
   products: PropTypes.array.isRequired,
 };
+
+
 
 export default function ProductList({ products, ...other }) {
   return (
