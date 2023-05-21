@@ -1,13 +1,18 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
-// @mui
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { Toast } from 'primereact/toast';
+
 import {
   Card,
   Table,
   Stack,
-  Paper,
   Avatar,
   Button,
   Popover,
@@ -22,93 +27,74 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
-// components
+
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-// sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
-import USERLIST from '../_mock/user';
+import { UserListHead } from '../sections/@dashboard/user';
 
-// ----------------------------------------------------------------------
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+
+
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'id', label: '#', alignRight: false },
+  { id: 'avatar', label: 'Avatar', alignRight: false },
+  { id: 'fullName', label: 'FullName', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'userName', label: 'UserName', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  {},
 ];
-
-// ----------------------------------------------------------------------
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
 
 export default function UserPage() {
   const [open, setOpen] = useState(null);
 
-  const [page, setPage] = useState(0);
-
-  const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
+  const [page, setPage] = useState(0);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpenMenu = (event) => {
+  const [totalElements, setTotalElements] = useState(0);
+
+  const [userList, setUserList] = useState([]);
+
+  const USER_API = `${process.env.REACT_APP_FETCH_API}/users`;
+
+  // Confirm delete
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const [status, setStatus] = useState(true);
+
+  const toast = useRef(null);
+
+  useEffect(() => {
+    axios
+      .get(`${USER_API}?size=${rowsPerPage}&page=${page}`)
+      .then(res => {
+        setUserList(res.data.content);
+        setTotalElements(res.data.totalElements)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [rowsPerPage, page])
+
+
+  const handleOpenMenu = (event, userId, isStatus) => {
+    console.log(userId);
     setOpen(event.currentTarget);
+    setSelectedUserId(userId);
+    setStatus(isStatus);
   };
 
   const handleCloseMenu = () => {
     setOpen(null);
-  };
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
   };
 
   const handleClick = (event, name) => {
@@ -127,6 +113,7 @@ export default function UserPage() {
   };
 
   const handleChangePage = (event, newPage) => {
+    console.log(newPage);
     setPage(newPage);
   };
 
@@ -135,116 +122,101 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
+  // Delete product in cart
+  const handleOpenDelete = () => {
+    setConfirmDelete(true);
+  }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const handleCloseDelete = () => {
+    setConfirmDelete(false);
+  }
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
-  const isNotFound = !filteredUsers.length && !!filterName;
+  function handleDelete(userId) {
+    console.log(userId);
+    if (userId) {
+      axios
+        .delete(`${USER_API}/${userId}`)
+        .then((res) => {
+          toast.current.show({ severity: 'success', summary: 'Success', detail: 'Delete successfully', life: 3000 });
+          setConfirmDelete(false);
+        })
+        .then(() => setTimeout(window.location.reload(), 5000))
+        .catch((err) => {
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Delete Fail', life: 3000 });
+        });
+    }
+  }
 
   return (
     <>
+      <Toast ref={toast} />
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> User | User Management </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            User Management
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New User
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
                 <UserListHead
-                  order={order}
-                  orderBy={orderBy}
+                  key="user-list-head"
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={totalElements}
                   numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
+
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                  {userList.map((row, index) => {
+                    const { id, fullName, userRoleDtos, isStatus, email, avatar, userName } = row;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                      <TableRow hover key={id} tabIndex={-1}>
+                        <TableCell align="left">{index + 1}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Avatar alt={fullName} src={avatar} />
+                        </TableCell>
+
+                        <TableCell align="left">{fullName}</TableCell>
+
+                        <TableCell align="left">{email}</TableCell>
+
+                        <TableCell align="left">{userName}</TableCell>
+
+                        <TableCell align="left">
+                          {
+                            userRoleDtos.map((userRole) => (
+                              <div key={userRole.roleDtoResponse.id}>
+                                -&ensp;{userRole.roleDtoResponse.desc}
+                              </div>
+                            ))
+                          }
+                        </TableCell>
+
+                        <TableCell align="left">
+                          <Label color={(isStatus) ? 'success' : 'error'}>{(isStatus) ? 'Active' : 'InActive'}</Label>
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, id, isStatus)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
                     );
                   })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
                 </TableBody>
 
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
               </Table>
             </TableContainer>
           </Scrollbar>
@@ -252,12 +224,13 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={totalElements}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
+
         </Card>
       </Container>
 
@@ -279,16 +252,48 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+
+        <Link to={`#`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+          <MenuItem>
+            <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
+            Info
+          </MenuItem>
+        </Link>
+
+        <Link to={`edit/${selectedUserId}`} style={{ textDecoration: 'none', color: 'blue' }}>
+          <MenuItem>
+            <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+            Edit
+          </MenuItem>
+        </Link>
+
+        <MenuItem disabled={!status} sx={{ color: 'error.main' }} onClick={handleOpenDelete}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
+
+      {confirmDelete && (
+        <Dialog open={confirmDelete} onClose={handleCloseDelete}>
+          <DialogTitle>Delete User</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this user?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDelete}>Cancel</Button>
+            <Button
+              onClick={() => handleDelete(selectedUserId)}
+              autoFocus
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
     </>
   );
 }
