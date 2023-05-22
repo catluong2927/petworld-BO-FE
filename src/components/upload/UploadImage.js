@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { Cloudinary } from 'cloudinary-core';
-import { Button } from '@mui/material';
 import '../../css/style.css'
 
 const UploadImage = (props) => {
