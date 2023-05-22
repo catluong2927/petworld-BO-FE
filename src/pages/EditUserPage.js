@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
@@ -20,11 +21,15 @@ const Page = () => {
     const [newAvatar, setNewAvatar] = useState('')
     const [currentUser, setCurrentUser] = useState(user)
     const toast = useRef(null);
-
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaWV1QGNvZGVneW0uY29tIiwiaWF0IjoxNjg0NjkzNTk1LCJleHAiOjE2ODQ3MTE1OTV9.atexfoTNHQnZ5wSpVx8AhuWbJg4qTpMy_k0aeVopqZhIhZdkq-6-_Ua-OR5AP96-Xhb6WqCDHZ_cLzIkDMSOuw';
+    const isLogin = useSelector((state) => state.auth.login?.currentUser);
+    const [token, setToken] = useState('');
 
     useEffect(() => {
-        if (userId) {
+        setToken(isLogin.token)
+      }, [isLogin])
+    
+    useEffect(() => {
+        if (userId && token) {
             axios
                 .get(`${USER_API}/${userId}`, {
                     headers: {
@@ -38,7 +43,7 @@ const Page = () => {
                     throw err;
                 });
         }
-    }, [userId]);
+    }, [userId, token]);
 
     useEffect(() => {
         setCurrentUser(prevUser => ({

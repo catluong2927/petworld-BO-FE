@@ -1,4 +1,5 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+import {useSelector} from "react-redux";
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
@@ -17,13 +18,19 @@ import InfoUserPage from './pages/InfoUserPage'
 import {EditCenter} from "./components/centers/EditCenter";
 
 
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
   const routes = useRoutes([
     {
+      path: 'login',
+      element: <LoginPage />,
+    },
+    {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: isLogin? <DashboardLayout /> : <Navigate to='/login' />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
@@ -37,10 +44,6 @@ export default function Router() {
         { path: 'products/add', element: <ProductAdd /> },
         { path: 'blog', element: <BlogPage /> },
       ],
-    },
-    {
-      path: 'login',
-      element: <LoginPage />,
     },
     {
       element: <SimpleLayout />,
