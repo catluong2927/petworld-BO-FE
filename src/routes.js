@@ -14,6 +14,7 @@ import {AddCenter} from "./components/centers/AddCenter";
 import EditUserPage from './pages/EditUserPage'
 import ProductAdd from './pages/ProductAdd';  
 import InfoUserPage from './pages/InfoUserPage'
+import {EditCenter} from "./components/centers/EditCenter";
 
 
 // ----------------------------------------------------------------------
@@ -31,7 +32,8 @@ export default function Router() {
         { path: 'user/info/:userId', element: <InfoUserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'centers',element: <CenterPage/>},
-            {path: "centers/new", element:<AddCenter/>},
+        { path: 'centers/edit/:id',element: <EditCenter/>},
+        {path: "centers/new", element:<AddCenter/>},
         { path: 'products/add', element: <ProductAdd /> },
         { path: 'blog', element: <BlogPage /> },
       ],

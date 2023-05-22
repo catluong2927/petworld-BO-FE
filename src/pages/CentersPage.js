@@ -62,6 +62,7 @@ export default function ProductsPage() {
         const  res = sentRequest(URL_CENTER);
         res.then((data) => {
             setCenters(data.content)
+            console.log(data.content);
         })
     }, []);
     const handleOpenMenu = (event, productId, status) => {
@@ -86,8 +87,15 @@ export default function ProductsPage() {
     const handleCloseDelete = () => {
         setConfirmDelete(false);
     };
-    function handleDelete() {
-
+    function handleDelete(props) {
+        setConfirmDelete(false)
+        const URL = `centers/${props}`
+        const res = sentRequest(URL, "DELETE")
+        res.then((data) => {
+            alert(`Delete successfully!`)
+        }).catch(() => {
+            alert("Cannot delete!")
+        })
 
     }
     return (
@@ -171,7 +179,7 @@ export default function ProductsPage() {
                     },
                 }}
             >
-                <Link to={`#`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+                <Link  to={`/${selectedProductId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
                     <MenuItem>
                         <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
                         Detail
