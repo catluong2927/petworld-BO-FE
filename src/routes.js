@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import EditUserPage from './pages/EditUserPage'
+import ProductAdd from './pages/ProductAdd';  
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ export default function Router() {
         { path: 'user', element: <UserPage />},
         { path: 'user/edit/:userId', element: <EditUserPage /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'products/add', element: <ProductAdd /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },

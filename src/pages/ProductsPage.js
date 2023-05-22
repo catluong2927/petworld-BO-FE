@@ -1,10 +1,9 @@
-
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-// import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { filter, size } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
+import { Toast } from 'primereact/toast';
 // @mui
 import {
   Card,
@@ -24,6 +23,11 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -33,249 +37,168 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 
-
-
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'number', label: '#', alignRight: false },
+  { id: 'image', label: 'Image', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'price', label: 'Price', alignRight: false },
   { id: 'sale', label: 'Sale', alignRight: false },
   { id: 'markDtoResponse', label: 'Mark', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { },
+  {},
 ];
 
 // ----------------------------------------------------------------------
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
 
 export default function ProductsPage() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [size, setSize] = useState(10);
 
-  const [selected, setSelected] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
-  const [filterName, setFilterName] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [status, setStatus] = useState(true);
 
-  const {productId} = useParams();
-  const isCreate = !productId;
-const [products, setProducts] = useState([]);
-const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/products?productId=${productId}`;
+  const toast = useRef(null);
 
-// ?size=${sizePages}&page=${currentPage}
+  const [products, setProducts] = useState([]);
 
+  const [categories, setCategories] = useState([]);
 
-//  useEffect(() => {
-//   axios
-//     .get(`${PRODUCT_API}`)
-//     .then(res => {
-//       setProducts(res.data.content)
-//     })
-//     .catch(err => {console.log(err)
-//     })
-//  }, [PRODUCT_API]);
+  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/products`;
 
-
-useEffect(() => {
-  if(!productId){
+  useEffect(() => {
     axios
-      .get(`${PRODUCT_API}`)
-      .then(res => {
+      .get(`${PRODUCT_API}?size=${size}&page=${page}&categoryIds=${categories}`)
+      .then((res) => {
         setProducts(res.data.content);
+        setTotalElements(res.data.totalElements);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
-      })
-    }
-}, [PRODUCT_API, productId]);
+      });
+  }, [size, page]);
 
-
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event, productId, status) => {
     setOpen(event.currentTarget);
+    setSelectedProductId(productId);
+    setStatus(status);
   };
 
   const handleCloseMenu = () => {
     setOpen(null);
   };
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  function handleCreate(){
-    window.location.href = "/components/product/add"
-  }
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
+    console.log(newPage);
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeSize = (event) => {
     setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setSize(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
+  const handleOpenDelete = () => {
+    setConfirmDelete(true);
   };
 
-  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const handleCloseDelete = () => {
+    setConfirmDelete(false);
+  };
 
-  // const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
-  // const isNotFound = !filteredUsers.length && !!filterName;
+  function handleDelete(productId) {
+    console.log(productId);
+    if (productId) {
+      axios
+        .delete(`${PRODUCT_API}/${productId}`)
+        .then((res) => {
+          toast.current.show({ severity: 'success', summary: 'Success', detail: 'Delete successfully', life: 3000 });
+          setConfirmDelete(false);
+        })
+        .then(() => setTimeout(window.location.reload(), 5000))
+        .catch((err) => {
+          toast.current.show({ severity: 'error', summary: 'Error', detail: 'Delete Fail', life: 3000 });
+        });
+    }
+  }
 
   return (
     <>
+      <Toast ref={toast} />
       <Helmet>
-        <title> Product | Minimal UI </title>
+        <title> Product | Product Management </title>
       </Helmet>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Product
+            Product Management
           </Typography>
-          <Button onClick={() => handleCreate()}variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Product
-          </Button>
+          <Link to={`add`}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              New Product
+            </Button>
+          </Link>
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
-                  headLabel={TABLE_HEAD}
-                  rowCount={products.length}
-                />
+                <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={products.length} />
 
                 <TableBody>
-                  {products.map((product) => {
-                    const { id, name, price, sale, image, markDtoResponse, status} = product;
+                  {products.map((product, index) => {
+                    const { id, name, price, sale, image, markDtoResponse, status } = product;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox">
-                        <TableCell padding="checkbox">
-                          <Checkbox onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
+                      <TableRow hover key={id} tabIndex={-1}>
+                        <TableCell align="left">{index + 1}</TableCell>
 
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={image} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
+                        <TableCell align="left">
+                          <Avatar src={image} />
                         </TableCell>
-
+                        <TableCell align="left">{name}</TableCell>
                         <TableCell align="left">{price}</TableCell>
                         <TableCell align="left">{sale}</TableCell>
                         <TableCell align="left">{markDtoResponse.tag}</TableCell>
                         <TableCell align="left">
-                          <Label color={(status) ? 'success' : 'error'}> {(status) ? 'Active' : 'InActive'} </Label>
+                          <Label color={status ? 'success' : 'error'}> {status ? 'Active' : 'InActive'} </Label>
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={(event) => handleOpenMenu(event, id, status)}
+                          >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
                     );
                   })}
-                  {/* {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )} */}
                 </TableBody>
-
-                {/* {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )} */}
               </Table>
             </TableContainer>
           </Scrollbar>
 
           <TablePagination
-            count={products.length}
-            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[10, 20, 30, 40, 50]}
+            component="div"
+            count={totalElements}
+            rowsPerPage={size}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeSize}
           />
         </Card>
       </Container>
@@ -298,16 +221,38 @@ useEffect(() => {
           },
         }}
       >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
+        <Link to={`#`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+          <MenuItem>
+            <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
+            Detail
+          </MenuItem>
+        </Link>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <Link to={`edit/${selectedProductId}`} style={{ textDecoration: 'none', color: 'blue' }}>
+          <MenuItem>
+            <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+            Edit
+          </MenuItem>
+        </Link>
+
+        <MenuItem disabled={!status} sx={{ color: 'error.main' }} onClick={handleOpenDelete}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
+
+      {confirmDelete && (
+        <Dialog open={confirmDelete} onClose={handleCloseDelete}>
+          <DialogTitle>Delete Product</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to delete product?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <button onClick={handleCloseDelete}>Cancel</button>
+            <button onClick={() => handleDelete(selectedProductId)}>Delete</button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 }
