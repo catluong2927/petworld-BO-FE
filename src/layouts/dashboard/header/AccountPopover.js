@@ -1,11 +1,13 @@
 import { useState } from 'react';
-// @mui
+
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
-// mocks_
+
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {logout} from "../../../redux/apiRequest";
 import account from '../../../_mock/account';
 
-// ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
@@ -25,6 +27,9 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
@@ -32,7 +37,7 @@ export default function AccountPopover() {
   };
 
   const handleClose = () => {
-    setOpen(null);
+      logout(dispatch,navigate)
   };
 
   return (
