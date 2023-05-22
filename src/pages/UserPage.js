@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useState, useEffect, useRef } from 'react';
+import {useSelector} from "react-redux";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
@@ -8,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Toast } from 'primereact/toast';
+
 
 import {
   Card,
@@ -38,6 +40,7 @@ import "primereact/resources/primereact.min.css";
 
 
 
+
 const TABLE_HEAD = [
   { id: 'id', label: '#', alignRight: false },
   { id: 'avatar', label: 'Avatar', alignRight: false },
@@ -49,7 +52,10 @@ const TABLE_HEAD = [
   {},
 ];
 
+
 export default function UserPage() {
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
+  const [token,setToken] = useState('');
   const [open, setOpen] = useState(null);
 
   const [selected, setSelected] = useState([]);
@@ -73,7 +79,9 @@ export default function UserPage() {
 
   const toast = useRef(null);
 
-  const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdW9uZ0Bjb2RlZ3ltLmNvbSIsImlhdCI6MTY4NDczMDA0OCwiZXhwIjoxNjg0NzQ4MDQ4fQ.CO7NT1Lei691ZOPFwU-GvxPwYad-BBf_Qzm-dujLjtS6fphApir8BPHZwuzC1L48Ns_by15KrzXNN75LBBngiA';
+  useEffect(() => {
+    setToken(isLogin.token)
+  }, [isLogin])
 
   useEffect(() => {
     axios

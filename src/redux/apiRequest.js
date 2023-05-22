@@ -19,9 +19,9 @@ export const loginUser = async (form, dispatch, navigate, toast) => {
         const res = await axios.post(`${LOGIN_API}/auth/login`, form);
         dispatch(loginSuccess(res.data));
         toast.current.show({severity: 'success', summary: 'Success', detail: 'Login successfully', life: 1000})
-        // setTimeout(() => {
-        //     navigate("/")
-        // }, 1000);
+        setTimeout(() => {
+            navigate("/")
+        }, 1000);
         console.log(res.data)
 
     } catch (err) {
