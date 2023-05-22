@@ -21,7 +21,7 @@ const Page = () => {
     const [currentUser, setCurrentUser] = useState(user)
     const toast = useRef(null);
 
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaWV1QGNvZGVneW0uY29tIiwiaWF0IjoxNjg0NjkzNTk1LCJleHAiOjE2ODQ3MTE1OTV9.atexfoTNHQnZ5wSpVx8AhuWbJg4qTpMy_k0aeVopqZhIhZdkq-6-_Ua-OR5AP96-Xhb6WqCDHZ_cLzIkDMSOuw';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdW9uZ0Bjb2RlZ3ltLmNvbSIsImlhdCI6MTY4NDczMDA0OCwiZXhwIjoxNjg0NzQ4MDQ4fQ.CO7NT1Lei691ZOPFwU-GvxPwYad-BBf_Qzm-dujLjtS6fphApir8BPHZwuzC1L48Ns_by15KrzXNN75LBBngiA';
 
     useEffect(() => {
         if (userId) {

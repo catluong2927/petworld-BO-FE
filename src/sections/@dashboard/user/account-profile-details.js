@@ -33,7 +33,7 @@ const AccountProfileDetails = (props) => {
         []
     );
 
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaWV1QGNvZGVneW0uY29tIiwiaWF0IjoxNjg0Njk3ODU0LCJleHAiOjE2ODQ3MTU4NTR9.gq8cn2G-nmAkfgMD6MtKd5U-O8QMUOP3A45uJCTIQqXEXTFiK5qYDqR0GuYhiDMz0D1HExs4VcMZ4khI4Z9DFA';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdW9uZ0Bjb2RlZ3ltLmNvbSIsImlhdCI6MTY4NDczMDA0OCwiZXhwIjoxNjg0NzQ4MDQ4fQ.CO7NT1Lei691ZOPFwU-GvxPwYad-BBf_Qzm-dujLjtS6fphApir8BPHZwuzC1L48Ns_by15KrzXNN75LBBngiA';
 
     const handleSubmit = useCallback(
         (event) => {

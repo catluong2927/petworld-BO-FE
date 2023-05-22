@@ -73,7 +73,7 @@ export default function UserPage() {
 
   const toast = useRef(null);
 
-  const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaWV1QGNvZGVneW0uY29tIiwiaWF0IjoxNjg0NzI3MDQ5LCJleHAiOjE2ODQ3NDUwNDl9.f7MCTp0zTZAyw2vR3rNVNOOKRPB9xPPOXpq22gG1StmjzzhrUjBFeGhKMb5n5PS-dzCmLF_vWp1ytrHK6ZIUjQ'
+  const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdW9uZ0Bjb2RlZ3ltLmNvbSIsImlhdCI6MTY4NDczMDA0OCwiZXhwIjoxNjg0NzQ4MDQ4fQ.CO7NT1Lei691ZOPFwU-GvxPwYad-BBf_Qzm-dujLjtS6fphApir8BPHZwuzC1L48Ns_by15KrzXNN75LBBngiA';
 
   useEffect(() => {
     axios
@@ -201,7 +201,7 @@ export default function UserPage() {
 
                         <TableCell align="left">{userName}</TableCell>
 
-                        {/* <TableCell align="left">
+                        <TableCell align="left">
                           {
                             userRoleDtos.map((userRole) => (
                               <div key={userRole.roleDtoResponse.id}>
@@ -209,7 +209,7 @@ export default function UserPage() {
                               </div>
                             ))
                           }
-                        </TableCell> */}
+                        </TableCell>
 
                         <TableCell align="left">
                           <Label color={(isStatus) ? 'success' : 'error'}>{(isStatus) ? 'Active' : 'InActive'}</Label>
