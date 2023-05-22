@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from "react-redux";
 import axios from 'axios';
 import {
     Box,
@@ -17,6 +18,13 @@ const AccountProfileDetails = (props) => {
     const USER_API = `${process.env.REACT_APP_FETCH_API}/users`;
     const [values, setValues] = useState({});
 
+    const isLogin = useSelector((state) => state.auth.login?.currentUser);
+    const [token, setToken] = useState('');
+
+    useEffect(() => {
+        setToken(isLogin.token)
+      }, [isLogin])
+
     useEffect(() => {
         setValues(props.currentUser)
     }, [props])
@@ -32,8 +40,6 @@ const AccountProfileDetails = (props) => {
         },
         []
     );
-
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsdW9uZ0Bjb2RlZ3ltLmNvbSIsImlhdCI6MTY4NDczMDA0OCwiZXhwIjoxNjg0NzQ4MDQ4fQ.CO7NT1Lei691ZOPFwU-GvxPwYad-BBf_Qzm-dujLjtS6fphApir8BPHZwuzC1L48Ns_by15KrzXNN75LBBngiA';
 
     const handleSubmit = useCallback(
         (event) => {
@@ -54,7 +60,7 @@ const AccountProfileDetails = (props) => {
                     throw err;
                 });
         },
-        [props.toast]
+        [props.toast, token]
     );
 
 
