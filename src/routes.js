@@ -11,6 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import EditUserPage from './pages/EditUserPage'
 import ProductAdd from './pages/ProductAdd';  
+import InfoUserPage from './pages/InfoUserPage'
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage />},
         { path: 'user/edit/:userId', element: <EditUserPage /> },
+        { path: 'user/info/:userId', element: <InfoUserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'products/add', element: <ProductAdd /> },
         { path: 'blog', element: <BlogPage /> },
