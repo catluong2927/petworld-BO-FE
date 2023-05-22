@@ -1,4 +1,5 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+import {useSelector} from "react-redux";
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
@@ -10,13 +11,19 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
   const routes = useRoutes([
     {
+      path: 'login',
+      element: <LoginPage />,
+    },
+    {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: isLogin? <DashboardLayout /> : <Navigate to='/login' />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
@@ -24,10 +31,6 @@ export default function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
-    },
-    {
-      path: 'login',
-      element: <LoginPage />,
     },
     {
       element: <SimpleLayout />,
