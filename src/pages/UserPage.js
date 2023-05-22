@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useState, useEffect, useRef } from 'react';
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
@@ -47,7 +47,7 @@ const TABLE_HEAD = [
   { id: 'fullName', label: 'FullName', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'userName', label: 'UserName', alignRight: false },
-  // { id: 'role', label: 'Role', alignRight: false },
+  { id: 'role', label: 'Role', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   {},
 ];
@@ -55,7 +55,9 @@ const TABLE_HEAD = [
 
 export default function UserPage() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
-  const [token,setToken] = useState('');
+
+  const [token, setToken] = useState('');
+
   const [open, setOpen] = useState(null);
 
   const [selected, setSelected] = useState([]);
@@ -84,20 +86,22 @@ export default function UserPage() {
   }, [isLogin])
 
   useEffect(() => {
-    axios
-      .get(`${USER_API}?size=${rowsPerPage}&page=${page}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(res => {
-        setUserList(res.data.content);
-        setTotalElements(res.data.totalElements)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }, [rowsPerPage, page])
+    if (token) {
+      axios
+        .get(`${USER_API}?size=${rowsPerPage}&page=${page}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then(res => {
+          setUserList(res.data.content);
+          setTotalElements(res.data.totalElements)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  }, [rowsPerPage, page, token])
 
   const handleOpenMenu = (event, userId, isStatus) => {
     console.log(userId);
@@ -162,6 +166,8 @@ export default function UserPage() {
         });
     }
   }
+  
+  console.log(userList)
 
   return (
     <>
@@ -175,9 +181,6 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             User Management
           </Typography>
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button> */}
         </Stack>
 
         <Card>

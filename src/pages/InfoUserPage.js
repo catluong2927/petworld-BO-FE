@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
@@ -13,11 +14,15 @@ const Page = () => {
     const USER_API = `${process.env.REACT_APP_FETCH_API}/users`;
     const { userId } = useParams();
     const [user, setUser] = useState({});
-
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaWV1QGNvZGVneW0uY29tIiwiaWF0IjoxNjg0NjkzNTk1LCJleHAiOjE2ODQ3MTE1OTV9.atexfoTNHQnZ5wSpVx8AhuWbJg4qTpMy_k0aeVopqZhIhZdkq-6-_Ua-OR5AP96-Xhb6WqCDHZ_cLzIkDMSOuw';
+    const isLogin = useSelector((state) => state.auth.login?.currentUser);
+    const [token, setToken] = useState('');
 
     useEffect(() => {
-        if (userId) {
+        setToken(isLogin.token)
+    }, [isLogin])
+
+    useEffect(() => {
+        if (userId && token) {
             axios
                 .get(`${USER_API}/${userId}`, {
                     headers: {
@@ -31,7 +36,7 @@ const Page = () => {
                     throw err;
                 });
         }
-    }, [userId]);
+    }, [userId, token]);
 
     console.log(user)
 
@@ -59,14 +64,14 @@ const Page = () => {
                                     md={6}
                                     lg={4}
                                 >
-                                    <UserProfile user={user}/>
+                                    <UserProfile user={user} />
                                 </Grid>
                                 <Grid
                                     xs={12}
                                     md={6}
                                     lg={8}
                                 >
-                                    <UserProfileDetails user = {user}/>
+                                    <UserProfileDetails user={user} />
                                 </Grid>
                             </Grid>
                         </div>
