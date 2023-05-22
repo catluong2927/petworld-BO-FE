@@ -1,0 +1,50 @@
+.custom-file-input {
+    color: transparent;
+    width: 100%;
+    max-width: 461.6px;
+}
+
+.custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+.custom-file-input::before {
+    content: 'Select Image';
+    color: #fff;
+    display: inline-flex;
+    background: #2065D1;
+    border: 1px solid #2065D1;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.875rem;
+    height: 36px;
+    border-radius: 6px;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    line-height: 1.7142857142857142;
+    text-transform: capitalize;
+    font-family: Public Sans, sans-serif;
+    min-width: 64px;
+    max-width: 461.6px;
+    padding: 6px 16px;
+    vertical-align: middle;
+    text-decoration: none;
+    width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(32, 101, 209, 0.24);
+}
+
+.custom-file-input:hover::before {
+    border-color: #fff;
+}
+
+.custom-file-input:active {
+    outline: 0;
+}
+
+.custom-file-input:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
