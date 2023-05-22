@@ -11,6 +11,9 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import CenterPage from "./pages/CentersPage";
 import {AddCenter} from "./components/centers/AddCenter";
+import EditUserPage from './pages/EditUserPage'
+import ProductAdd from './pages/ProductAdd';  
+import InfoUserPage from './pages/InfoUserPage'
 
 
 // ----------------------------------------------------------------------
@@ -23,11 +26,13 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
+        { path: 'user', element: <UserPage />},
+        { path: 'user/edit/:userId', element: <EditUserPage /> },
+        { path: 'user/info/:userId', element: <InfoUserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'centers',element: <CenterPage/>},
             {path: "centers/new", element:<AddCenter/>},
-
+        { path: 'products/add', element: <ProductAdd /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
