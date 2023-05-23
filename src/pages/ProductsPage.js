@@ -235,7 +235,7 @@ export default function ProductsPage() {
             Edit
           </MenuItem>
         </Link>
-
+        
         <MenuItem disabled={!status} sx={{ color: 'error.main' }} onClick={handleOpenDelete}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
