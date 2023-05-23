@@ -85,6 +85,8 @@ export default function UserPage() {
     setToken(isLogin.token)
   }, [isLogin])
 
+  console.log(token)
+
   useEffect(() => {
     if (token) {
       axios
