@@ -12,7 +12,6 @@ import UploadImage from '../../../components/upload/UploadImage';
 
 
 function AccountProfile(props) {
-  console.log(props.user);
 
   return (
     <Card>
