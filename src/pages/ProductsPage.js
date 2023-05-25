@@ -74,7 +74,7 @@ export default function ProductsPage() {
 
   const [categories, setCategories] = useState([]);
 
-  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/products`;
+  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
 
   useEffect(() => {
     axios
@@ -143,11 +143,11 @@ export default function ProductsPage() {
           <Typography variant="h4" gutterBottom>
             Product Management
           </Typography>
-          <Link to={`add`}>
+          {/* <Link to={`add`}>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               New Product
             </Button>
-          </Link>
+          </Link> */}
         </Stack>
 
         <Card>
@@ -172,7 +172,7 @@ export default function ProductsPage() {
                         <TableCell align="left">{sale}</TableCell>
                         <TableCell align="left">{markDtoResponse.tag}</TableCell>
                         <TableCell align="left">
-                          <Label color={status ? 'success' : 'error'}> {status ? 'Active' : 'InActive'} </Label>
+                          <Label color={(status) ? 'success' : 'error'}> {(status) ? 'Active' : 'InActive'} </Label>
                         </TableCell>
 
                         <TableCell align="right">
