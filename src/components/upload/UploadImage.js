@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { Cloudinary } from 'cloudinary-core';
-import { Button } from '@mui/material';
 import '../../css/style.css'
 
 const UploadImage = (props) => {
-    const presetKey = "UserImage";
-    const cloudName = "dr3rwgzpl";
-    const apiKey = "552921944827948";
+    const presetKey = "vomas9sd";
+    const cloudName = "dhnom0aq3";
+    const apiKey = "765763525994293";
     const timestamp = Math.round((new Date()).getTime() / 1000);
     const cloudinary = new Cloudinary({ cloud_name: cloudName });
     const [fileImage, setFileImage] = useState(null);

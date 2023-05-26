@@ -38,9 +38,6 @@ const Page = () => {
         }
     }, [userId, token]);
 
-    console.log(user)
-
-
     return (
         <>
             <Helmet>

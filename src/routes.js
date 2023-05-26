@@ -1,24 +1,40 @@
 import { Navigate, useRoutes } from 'react-router-dom';
-import {useSelector} from "react-redux";
+import { useEffect, useState } from 'react';
+import { useSelector } from "react-redux";
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
-//
+import DashboardAppPage from './pages/DashboardAppPage';
 import BlogPage from './pages/BlogPage';
-import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
+
+// Product
 import ProductsPage from './pages/ProductsPage';
-import DashboardAppPage from './pages/DashboardAppPage';
+import ProductAdd from './pages/ProductAdd';
+
+// Center
+import CenterPage from "./pages/center/CentersPage";
+import OwnerCenterPage from "./pages/center/OwnerCenterPage";
+import { AddCenter } from "./components/centers/AddCenter";
+
+// User
+import UserPage from './pages/UserPage';
 import EditUserPage from './pages/EditUserPage'
-import ProductAdd from './pages/ProductAdd';  
 import InfoUserPage from './pages/InfoUserPage'
+import { EditCenter } from "./components/centers/EditCenter";
+import InfoCenter from "./components/centers/InfoCenter";
+
+// Role
+import AdminPrivateRoute from "./hoc/AdminPrivateRoute";
+import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
 
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
   const routes = useRoutes([
     {
       path: 'login',
@@ -26,15 +42,24 @@ export default function Router() {
     },
     {
       path: '/dashboard',
-      element: isLogin? <DashboardLayout /> : <Navigate to='/login' />,
+      element: isLogin ? <DashboardLayout /> : <Navigate to='/login' />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage />},
+        { path: 'user', element: <UserPage /> },
         { path: 'user/edit/:userId', element: <EditUserPage /> },
         { path: 'user/info/:userId', element: <InfoUserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'products/add', element: <ProductAdd /> },
+        { path: 'centers', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
+          { path: '', element: <CenterPage /> },
+          { path: 'new', element: <AddCenter /> },
+          { path: 'info/:centerId', element: <InfoCenter /> },
+        ]},
+        { path: 'centerOwner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
+          { path: '', element: <OwnerCenterPage /> },
+          { path: 'edit/:centerId', element: <EditCenter /> },
+        ]},
         { path: 'blog', element: <BlogPage /> },
       ],
     },
