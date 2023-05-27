@@ -84,7 +84,7 @@ export default function ProductsPage() {
 
     useEffect(() => {
         axios
-            .get(`${CENTER_API}/all?size=${size}&page=${page}`)
+            .get(`${CENTER_API}/all?size=${size}&page=${page}&sort=id,desc`)
             .then(res => {
                 setCenters(res.data.content);
                 setTotalElements(res.data.totalElements);
@@ -159,7 +159,7 @@ export default function ProductsPage() {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={centers.length} />
+                                <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={totalElements} />
                                 <TableBody>
                                     {centers.map((center, index) => {
                                         const { id, name, address, email, isActive, phone } = center;
@@ -191,7 +191,7 @@ export default function ProductsPage() {
                         </TableContainer>
                     </Scrollbar>
                     <TablePagination
-                        rowsPerPageOptions={[10, 20, 30, 40, 50]}
+                        rowsPerPageOptions={[9, 18, 27, 36, 45]}
                         component="div"
                         count={totalElements}
                         rowsPerPage={size}

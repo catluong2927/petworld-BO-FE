@@ -16,13 +16,13 @@ import ProductAdd from './pages/ProductAdd';
 // Center
 import CenterPage from "./pages/center/CentersPage";
 import OwnerCenterPage from "./pages/center/OwnerCenterPage";
-import { AddCenter } from "./components/centers/AddCenter";
+import AddCenter from "./components/centers/AddCenter";
 
 // User
 import UserPage from './pages/UserPage';
 import EditUserPage from './pages/EditUserPage'
 import InfoUserPage from './pages/InfoUserPage'
-import { EditCenter } from "./components/centers/EditCenter";
+import EditCenter from "./components/centers/EditCenter";
 import InfoCenter from "./components/centers/InfoCenter";
 
 // Role
@@ -53,11 +53,11 @@ export default function Router() {
         { path: 'products/add', element: <ProductAdd /> },
         { path: 'centers', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
           { path: '', element: <CenterPage /> },
-          { path: 'new', element: <AddCenter /> },
           { path: 'info/:centerId', element: <InfoCenter /> },
         ]},
-        { path: 'centerOwner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
+        { path: 'centers/owner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
           { path: '', element: <OwnerCenterPage /> },
+          { path: 'add', element: <AddCenter /> },
           { path: 'edit/:centerId', element: <EditCenter /> },
         ]},
         { path: 'blog', element: <BlogPage /> },

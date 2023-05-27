@@ -10,7 +10,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Toast } from 'primereact/toast';
 
-
 import {
   Card,
   Table,
@@ -36,9 +35,6 @@ import { UserListHead } from '../sections/@dashboard/user';
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
-
-
-
 
 const TABLE_HEAD = [
   { id: 'id', label: '#', alignRight: false },
