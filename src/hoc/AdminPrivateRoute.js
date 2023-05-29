@@ -1,7 +1,9 @@
-import React, { useEffect , useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";
 import { checkAdminRole } from "../utils/checkAdminRole";
+import { checkOwnerRole } from "../utils/checkOwnerRole";
+import { checkSellerRole } from "../utils/checkSellerRole";
 
 
 function AdminPrivateRoute({ roleName }) {

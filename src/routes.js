@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 import DashboardAppPage from './pages/DashboardAppPage';
-import BlogPage from './pages/BlogPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 
@@ -17,17 +16,24 @@ import ProductAdd from './pages/ProductAdd';
 import CenterPage from "./pages/center/CentersPage";
 import OwnerCenterPage from "./pages/center/OwnerCenterPage";
 import AddCenter from "./components/centers/AddCenter";
+import EditCenter from "./components/centers/EditCenter";
+import InfoCenter from "./components/centers/InfoCenter";
+
+// Package
+import PackagePage from './pages/package/PackagePage';
+import SellerPackageDetailPage from "./pages/package/SellerPackageDetailPage";
+import InfoPackage from "./components/package/InfoPackage";
 
 // User
 import UserPage from './pages/UserPage';
 import EditUserPage from './pages/EditUserPage'
 import InfoUserPage from './pages/InfoUserPage'
-import EditCenter from "./components/centers/EditCenter";
-import InfoCenter from "./components/centers/InfoCenter";
 
 // Role
 import AdminPrivateRoute from "./hoc/AdminPrivateRoute";
 import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
+import SellerPrivateRoute from './hoc/SellerPrivateRoute';
+import PrivateRoute from './hoc/PrivateRoute';
 
 
 // ----------------------------------------------------------------------
@@ -51,16 +57,47 @@ export default function Router() {
         { path: 'user/info/:userId', element: <InfoUserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'products/add', element: <ProductAdd /> },
-        { path: 'centers', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
-          { path: '', element: <CenterPage /> },
-          { path: 'info/:centerId', element: <InfoCenter /> },
-        ]},
-        { path: 'centers/owner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
-          { path: '', element: <OwnerCenterPage /> },
-          { path: 'add', element: <AddCenter /> },
-          { path: 'edit/:centerId', element: <EditCenter /> },
-        ]},
-        { path: 'blog', element: <BlogPage /> },
+
+
+        // { path: 'centers', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
+        //   { path: '', element: <CenterPage /> },
+        //   { path: 'info/:centerId', element: <InfoCenter /> },
+        // ]},
+        // { path: 'package', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
+        //   { path: '', element: <PackagePage /> },
+        //   { path: 'info/:packageId', element: <InfoPackage /> },
+        // ]},
+        // { path: 'centers', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
+        //   { path: '', element: <OwnerCenterPage /> },
+        //   { path: 'add', element: <AddCenter /> },
+        //   { path: 'edit/:centerId', element: <EditCenter /> },
+        // ]},
+        // { path: 'package/seller', element: <SellerPrivateRoute roleName="ROLE_SELLER" />, children: [
+        //   { path: '', element: <SellerPackageDetailPage /> },
+        //   { path: 'add', element: <AddCenter /> },
+        //   { path: 'edit/:packageId', element: <EditCenter /> },
+        // ]},
+
+        {
+          path: 'admin', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
+            {
+              path: 'centers', element: <CenterPage />, children: [
+                { path: 'info/:centerId', element: <InfoCenter /> },
+              ]
+            },
+          ]
+        },
+        {
+          path: 'owner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
+            {
+              path: 'centers', element: <OwnerCenterPage />, children: [
+                { path: 'add', element: <AddCenter /> },
+                { path: 'edit/:centerId', element: <EditCenter /> },
+              ]
+            },
+          ]
+        },
+
       ],
     },
     {

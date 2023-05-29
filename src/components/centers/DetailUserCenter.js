@@ -52,9 +52,16 @@ const DetailUserCenter = (props) => {
         }
     }, [userId]);
 
-    function isEmpty(obj) {
+    function isEmptyValue(obj) {
         const valueArr = Object.values(obj);
         if (valueArr.includes(null)) {
+            return true;
+        }
+        return false;
+    }
+
+    function isEmpty(obj) {
+        if(Object.keys(obj).length === 0) {
             return true;
         }
         return false;
