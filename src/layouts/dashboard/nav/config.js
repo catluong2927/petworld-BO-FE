@@ -24,7 +24,7 @@ const navConfig = [
     {
         title: 'center',
         path: '/dashboard/centers',
-        icon: icon('ic_blog')
+        icon: icon('ic_center')
     }
     ,
     {

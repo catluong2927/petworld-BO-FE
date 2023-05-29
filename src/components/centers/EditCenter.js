@@ -1,70 +1,216 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
-import classes from "./AddCenter.module.css"
-import {sentRequest} from "../../pages/FetchApi";
+import { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { Toast } from 'primereact/toast';
+import { useParams } from "react-router-dom";
 
-export const EditCenter = () => {
-    const nameInputRef = useRef();
-    const phoneInputRef = useRef();
-    const emailInputRef = useRef();
-    const addressInputRef = useRef();
-    const id = useParams();
-    const navigation = useNavigate();
-    const [center , setCenter]= useState({});
-    const URL_CENTER_EDIT = `centers/${id.id}`;
+import {
+    Box,
+    Card,
+    CardContent,
+    CardHeader,
+    Divider,
+    TextField,
+    CardActions,
+    Unstable_Grid2 as Grid,
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
+} from '@mui/material';
+
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+
+function EditCenter() {
+    const currentUser = useSelector((state) => state.auth.login?.currentUser);
+
+    const CENTER_API = `${process.env.REACT_APP_FETCH_API}/centers`;
+
+    const userEmail = currentUser.userDtoResponse.email;
+
+    const { centerId } = useParams();
+
+    const [editCenter, setEditCenter] = useState({});
+
+    const toast = useRef(null);
 
     useEffect(() => {
-        const res = sentRequest(URL_CENTER_EDIT);
-        res.then(data => {
-            setCenter(data);
-            console.log(center)
-        })
-    }, [])
+        if (centerId) {
+            axios
+                .get(`${CENTER_API}/${centerId}`)
+                .then(res => {
+                    setEditCenter(res.data);
+                })
+                .catch(err => {
+                    throw err;
+                });
+        }
+    }, [centerId]);
 
-    function submitHandler(event) {
-        event.preventDefault();
-        const enteredTitle = nameInputRef.current.value;
-        const enteredPhone = phoneInputRef.current.value;
-        const enteredEmail = phoneInputRef.current.value;
-        const enteredAddress = addressInputRef.current.value;
-        const centerData = {
-            id: id.id,
-            name: enteredTitle,
-            phone: enteredPhone,
-            email: enteredEmail,
-            address: enteredAddress,
-            isActive: true,
-        };
-        const res = sentRequest(URL_CENTER_EDIT, "PUT",centerData);
-        res.then((data) => {
-            alert("Edit center successfully")
-        }).catch((data) => {
-            alert("Failed editing!")
-        });
-        navigation("/dashboard/centers")
+    function handleChange(e) {
+        setEditCenter({
+            'userEmail': userEmail,
+            ...editCenter,
+            [e.target.name]: e.target.value,
+        })
     }
 
+    function handleSubmit(e) {
+        axios
+            .put(`${CENTER_API}/${centerId}`, editCenter)
+            .then(res => {
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
+                window.location.href = "/dashboard/centers/owner";
+            })
+            .catch(err => {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create Fail', life: 3000 });
+                throw err;
+            });
+    }
+
+    console.log(editCenter)
+
     return (
-        <form className={classes.form} onSubmit={submitHandler}>
-            <div className={classes.control}>
-                <h3 >Name</h3>
-                <input type='text' required id="title" ref={nameInputRef} defaultValue={center.name}/>
-            </div>
-            <div className={classes.control}>
-                <h3>Phone</h3>
-                <input type='number' required id='image' ref={phoneInputRef} defaultValue={center.phone}/>
-            </div>
-            <div className={classes.control}>
-                <h3>Email</h3>
-                <input type='email' required id='image' ref={emailInputRef} defaultValue={center.email}/>
-            </div>
-            <div className={classes.control}>
-                <h3>Address</h3>
-                <input type='text' required id='address' ref={addressInputRef} defaultValue={center.address}/>
-            </div>
-            <div className={classes.actions}>
-                <button>Edit Center</button>
-            </div>
-        </form>
+        <>
+            <Toast ref={toast} />
+            <form
+                autoComplete="off"
+                noValidate
+                onSubmit={handleSubmit}
+            >
+                <Card>
+                    <CardHeader
+                        subheader="The information can be edited"
+                        title="Center"
+                        style={{ paddingBottom: '20px', fontSize: '100px' }}
+                    />
+                    <CardContent sx={{ pt: 0 }}>
+                        <Box sx={{ m: -1.5 }}>
+                            <Grid
+                                container
+                                spacing={3}
+                            >
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                    hidden
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="id"
+                                        name="id"
+                                        onChange={(e) => handleChange(e)}
+                                        value={editCenter.id || ''}
+                                        hidden
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        helperText="Please specify the Name"
+                                        label="Name"
+                                        name="name"
+                                        onChange={(e) => handleChange(e)}
+                                        required
+                                        value={editCenter.name || ''}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Email Address"
+                                        name="email"
+                                        onChange={(e) => handleChange(e)}
+                                        required
+                                        value={editCenter.email || ''}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Phone Number"
+                                        name="phone"
+                                        onChange={(e) => handleChange(e)}
+                                        type="number"
+                                        required
+                                        value={editCenter.phone || ''}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Address"
+                                        name="address"
+                                        onChange={(e) => handleChange(e)}
+                                        required
+                                        value={editCenter.address || ''}
+                                    />
+                                </Grid>
+
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="User email"
+                                        name="userEmail"
+                                        onChange={(e) => handleChange(e)}
+                                        value={userEmail || ''}
+                                        InputProps={{
+                                            readOnly: true,
+                                        }}
+                                    />
+                                </Grid>
+
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            label="Active"
+                                            name="isActive"
+                                            value={editCenter.isActive || ''}
+                                            onChange={(e) => handleChange(e)}
+                                            required
+                                        >
+                                            <MenuItem value={'true'}>Active</MenuItem>
+                                            <MenuItem value={'false'}>Inactive</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+
+                            </Grid>
+                        </Box>
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        <Button variant="contained" onClick={(e) => handleSubmit(e)}>
+                            Save details
+                        </Button>
+                    </CardActions>
+                </Card>
+            </form>
+        </>
     );
 }
+
+export default EditCenter;

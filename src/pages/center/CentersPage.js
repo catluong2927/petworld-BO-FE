@@ -2,18 +2,17 @@ import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from "react-redux";
+import { Toast } from 'primereact/toast';
 
 // @mui
 import {
     Card,
     Table,
     Stack,
-    Paper,
-    Avatar,
     Button,
-    Popover,
-    Checkbox,
     TableRow,
+    Popover,
     MenuItem,
     TableBody,
     TableCell,
@@ -28,14 +27,18 @@ import {
     DialogContentText,
     DialogActions,
 } from '@mui/material';
+
 // components
-import Label from '../components/label';
-import Iconify from '../components/iconify';
-import Scrollbar from '../components/scrollbar';
+import Label from '../../components/label';
+import Iconify from '../../components/iconify';
+import Scrollbar from '../../components/scrollbar';
+
 // sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-import {sentRequest} from "./FetchApi";
-// mock
+import { UserListHead } from '../../sections/@dashboard/user';
+
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
     { id: 'number', label: '#', alignRight: false },
@@ -49,57 +52,94 @@ const TABLE_HEAD = [
 ];
 // ----------------------------------------------------------------------
 export default function ProductsPage() {
+
+    const CENTER_API = `${process.env.REACT_APP_FETCH_API}/centers`;
+
     const [open, setOpen] = useState(null);
+
     const [page, setPage] = useState(0);
-    const [size, setSize] = useState(10);
+
+    const [size, setSize] = useState(9);
+
     const [totalElements, setTotalElements] = useState(0);
-    const [selectedProductId, setSelectedProductId] = useState(null);
+
+    const [selectedCenterId, setSelectedCenterId] = useState(null);
+
     const [confirmDelete, setConfirmDelete] = useState(false);
+
     const [status, setStatus] = useState(true);
+
     const [centers, setCenters] = useState([]);
-    const URL_CENTER = "centers";
+
+    const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+    const [token, setToken] = useState('');
+
+    const toast = useRef(null);
+
     useEffect(() => {
-        const  res = sentRequest(URL_CENTER);
-        res.then((data) => {
-            setCenters(data.content)
-            console.log(data.content);
-        })
-    }, []);
-    const handleOpenMenu = (event, productId, status) => {
+        setToken(isLogin.token)
+    }, [isLogin])
+
+
+    useEffect(() => {
+        axios
+            .get(`${CENTER_API}/all?size=${size}&page=${page}&sort=id,desc`)
+            .then(res => {
+                setCenters(res.data.content);
+                setTotalElements(res.data.totalElements);
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [size, page])
+
+    const handleOpenMenu = (event, centerId, status) => {
         setOpen(event.currentTarget);
-        setSelectedProductId(productId);
+        setSelectedCenterId(centerId);
         setStatus(status);
     };
+
     const handleCloseMenu = () => {
         setOpen(null);
     };
+
     const handleChangePage = (event, newPage) => {
         console.log(newPage);
         setPage(newPage);
     };
+
     const handleChangeSize = (event) => {
         setPage(0);
         setSize(parseInt(event.target.value, 10));
     };
+
     const handleOpenDelete = () => {
         setConfirmDelete(true);
     };
+
     const handleCloseDelete = () => {
         setConfirmDelete(false);
     };
-    function handleDelete(props) {
-        setConfirmDelete(false)
-        const URL = `centers/${props}`
-        const res = sentRequest(URL, "DELETE")
-        res.then((data) => {
-            alert(`Delete successfully!`)
-        }).catch(() => {
-            alert("Cannot delete!")
-        })
 
+    function handleDeleteCenter(centerId) {
+        if (centerId) {
+            axios
+                .delete(`${CENTER_API}/${centerId}`)
+                .then((res) => {
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: `Delete ${res.data.name} successfully`, life: 3000 });
+                    setConfirmDelete(false);
+                })
+                .then(setTimeout(() => window.location.reload(), 3000))
+                .catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Delete Fail', life: 3000 });
+                });
+        }
     }
+
     return (
         <>
+            <Toast ref={toast} />
 
             <Helmet>
                 <title> Center | Center Management </title>
@@ -109,23 +149,23 @@ export default function ProductsPage() {
                     <Typography variant="h4" gutterBottom>
                         Center Management
                     </Typography>
-                    <Link to={`/dashboard/centers/new`}>
+                    {/* <Link to={`/dashboard/centers/new`}>
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                             New Center
                         </Button>
-                    </Link>
+                    </Link> */}
                 </Stack>
                 <Card>
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={centers.length} />
+                                <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={totalElements} />
                                 <TableBody>
                                     {centers.map((center, index) => {
                                         const { id, name, address, email, isActive, phone } = center;
                                         return (
                                             <TableRow hover key={id} tabIndex={-1}>
-                                                <TableCell align="left">{index + 1}</TableCell>
+                                                <TableCell align="left">{id}</TableCell>
                                                 <TableCell align="left">{name}</TableCell>
                                                 <TableCell align="left">{address}</TableCell>
                                                 <TableCell align="left">{email}</TableCell>
@@ -151,7 +191,7 @@ export default function ProductsPage() {
                         </TableContainer>
                     </Scrollbar>
                     <TablePagination
-                        rowsPerPageOptions={[10, 20, 30, 40, 50]}
+                        rowsPerPageOptions={[9, 18, 27, 36, 45]}
                         component="div"
                         count={totalElements}
                         rowsPerPage={size}
@@ -179,16 +219,10 @@ export default function ProductsPage() {
                     },
                 }}
             >
-                <Link  to={`/${selectedProductId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+                <Link to={`info/${selectedCenterId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
                     <MenuItem>
                         <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
                         Detail
-                    </MenuItem>
-                </Link>
-                <Link to={`edit/${selectedProductId}`} style={{ textDecoration: 'none', color: 'blue' }}>
-                    <MenuItem>
-                        <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                        Edit
                     </MenuItem>
                 </Link>
                 <MenuItem disabled={!status} sx={{ color: 'error.main' }} onClick={handleOpenDelete}>
@@ -196,15 +230,23 @@ export default function ProductsPage() {
                     Delete
                 </MenuItem>
             </Popover>
+
             {confirmDelete && (
                 <Dialog open={confirmDelete} onClose={handleCloseDelete}>
-                    <DialogTitle>Delete Product</DialogTitle>
+                    <DialogTitle>Delete the center</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>Are you sure you want to delete product?</DialogContentText>
+                        <DialogContentText>
+                            Are you sure you want to delete this center?
+                        </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <button onClick={handleCloseDelete}>Cancel</button>
-                        <button onClick={() => handleDelete(selectedProductId)}>Delete</button>
+                        <Button onClick={handleCloseDelete}>Cancel</Button>
+                        <Button
+                            onClick={() => handleDeleteCenter(selectedCenterId)}
+                            autoFocus
+                        >
+                            Delete
+                        </Button>
                     </DialogActions>
                 </Dialog>
             )}

@@ -1,59 +1,174 @@
-import {useNavigate} from "react-router-dom";
-import {useRef} from "react";
-import classes from "./AddCenter.module.css"
-import {sentRequest} from "../../pages/FetchApi";
+import { useState , useRef } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { Toast } from 'primereact/toast';
 
-export const AddCenter = () => {
-    const nameInputRef = useRef();
-    const phoneInputRef = useRef();
-    const emailInputRef = useRef();
-    const addressInputRef = useRef();
-    const navigation = useNavigate();
-    const URL_CENTERS = "centers";
-    function submitHandler(event) {
-        event.preventDefault();
-        const enteredTitle = nameInputRef.current.value;
-        const enteredPhone = phoneInputRef.current.value;
-        const enteredEmail = phoneInputRef.current.value;
-        const enteredAddress = addressInputRef.current.value;
+import {
+    Box,
+    Card,
+    CardContent,
+    CardHeader,
+    Divider,
+    TextField,
+    CardActions,
+    Unstable_Grid2 as Grid,
+    Button,
+} from '@mui/material';
 
-        const centerData = {
-            name: enteredTitle,
-            phone: enteredPhone,
-            email: enteredEmail,
-            address: enteredAddress,
-            isActive: true,
-        };
-        const res = sentRequest(URL_CENTERS, "POST",centerData);
-        res.then((data) => {
-            alert("Create center successfully")
-        }).catch((data) => {
-            alert("Failed creation!")
-        });
-        navigation("/dashboard/centers")
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+
+function AddCenter() {
+    const currentUser = useSelector((state) => state.auth.login?.currentUser);
+
+    const CENTER_API = `${process.env.REACT_APP_FETCH_API}/centers`;
+
+    const userEmail = currentUser.userDtoResponse.email;
+
+    const [newCenter, setNewCenter] = useState({});
+
+    const toast = useRef(null);
+
+    function handleChange(e) {
+        setNewCenter({
+            'userEmail': userEmail,
+            ...newCenter,
+            [e.target.name]: e.target.value,
+        })
+    }
+
+    function handleSubmit(e) {
+        console.log('submit')
+        axios
+            .post(`${CENTER_API}`, newCenter)
+            .then(res => {
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
+                window.location.href = "/dashboard/centers/owner";
+            })
+            .catch(err => {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create Fail', life: 3000 });
+                throw err;
+            });
     }
 
     return (
-        <form className={classes.form} onSubmit={submitHandler}>
-            <div className={classes.control}>
-                <h3 >Name</h3>
-                <input type='text' required id="title" ref={nameInputRef}/>
-            </div>
-            <div className={classes.control}>
-                <h3>Phone</h3>
-                <input type='number' required id='image' ref={phoneInputRef}/>
-            </div>
-            <div className={classes.control}>
-                <h3>Email</h3>
-                <input type='email' required id='image' ref={emailInputRef}/>
-            </div>
-            <div className={classes.control}>
-                <h3>Address</h3>
-                <input type='text' required id='address' ref={addressInputRef}/>
-            </div>
-            <div className={classes.actions}>
-                <button>Add Center</button>
-            </div>
-        </form>
+        <>
+            <Toast ref={toast} />
+            <form
+                autoComplete="off"
+                noValidate
+                onSubmit={handleSubmit}
+            >
+                <Card>
+                    <CardHeader
+                        subheader="The information can be edited"
+                        title="Center"
+                        style={{ paddingBottom: '20px', fontSize: '100px' }}
+                    />
+                    <CardContent sx={{ pt: 0 }}>
+                        <Box sx={{ m: -1.5 }}>
+                            <Grid
+                                container
+                                spacing={3}
+                            >
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                    hidden
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="id"
+                                        name="id"
+                                        onChange={(e) => handleChange(e)}
+                                        value={newCenter.id || ''}
+                                        hidden
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        helperText="Please specify the Name"
+                                        label="Name"
+                                        name="name"
+                                        onChange={(e) => handleChange(e)}
+                                        required
+                                        value={newCenter.name || ''}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Email Address"
+                                        name="email"
+                                        onChange={(e) => handleChange(e)}
+                                        required
+                                        value={newCenter.email || ''}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Phone Number"
+                                        name="phone"
+                                        onChange={(e) => handleChange(e)}
+                                        type="number"
+                                        required
+                                        value={newCenter.phone || ''}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Address"
+                                        name="address"
+                                        onChange={(e) => handleChange(e)}
+                                        required
+                                        value={newCenter.address || ''}
+                                    />
+                                </Grid>
+
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="User email"
+                                        name="userEmail"
+                                        onChange={(e) => handleChange(e)}
+                                        value={userEmail || ''}
+                                        InputProps={{
+                                            readOnly: true,
+                                        }}
+                                    />
+                                </Grid>
+
+                            </Grid>
+                        </Box>
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        <Button variant="contained" onClick={(e) => handleSubmit(e)}>
+                            Save details
+                        </Button>
+                    </CardActions>
+                </Card>
+            </form>
+        </>
     );
 }
+
+export default AddCenter;
