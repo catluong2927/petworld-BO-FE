@@ -35,9 +35,6 @@ import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
 import SellerPrivateRoute from './hoc/SellerPrivateRoute';
 import PrivateRoute from './hoc/PrivateRoute';
 
-
-// ----------------------------------------------------------------------
-
 export default function Router() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
 
@@ -52,52 +49,47 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
-        { path: 'user/edit/:userId', element: <EditUserPage /> },
-        { path: 'user/info/:userId', element: <InfoUserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'products/add', element: <ProductAdd /> },
 
-
-        // { path: 'centers', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
-        //   { path: '', element: <CenterPage /> },
-        //   { path: 'info/:centerId', element: <InfoCenter /> },
-        // ]},
-        // { path: 'package', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
-        //   { path: '', element: <PackagePage /> },
-        //   { path: 'info/:packageId', element: <InfoPackage /> },
-        // ]},
-        // { path: 'centers', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
-        //   { path: '', element: <OwnerCenterPage /> },
-        //   { path: 'add', element: <AddCenter /> },
-        //   { path: 'edit/:centerId', element: <EditCenter /> },
-        // ]},
-        // { path: 'package/seller', element: <SellerPrivateRoute roleName="ROLE_SELLER" />, children: [
-        //   { path: '', element: <SellerPackageDetailPage /> },
-        //   { path: 'add', element: <AddCenter /> },
-        //   { path: 'edit/:packageId', element: <EditCenter /> },
-        // ]},
-
+        // Admin
         {
-          path: 'admin', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
+          path: 'admin',
+          element: <AdminPrivateRoute roleName="ROLE_ADMIN" />,
+          children: [
             {
-              path: 'centers', element: <CenterPage />, children: [
-                { path: 'info/:centerId', element: <InfoCenter /> },
-              ]
+              path: 'user',
+              children: [
+                { path: '', element: <UserPage /> },
+                { path: 'edit/:userId', element: <EditUserPage /> },
+                { path: 'info/:userId', element: <InfoUserPage /> },
+              ],
             },
-          ]
-        },
-        {
-          path: 'owner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
             {
-              path: 'centers', element: <OwnerCenterPage />, children: [
+              path: 'centers',
+              element: <CenterPage />,
+              children: [
+                { path: 'info/:centerId', element: <InfoCenter /> },
+              ],
+            },
+            { path: 'products', element: <ProductsPage /> },
+          ],
+        },
+
+        // Owner
+        {
+          path: 'owner',
+          element: <OwnerPrivateRoute roleName="ROLE_OWNER" />,
+          children: [
+            {
+              path: 'centers',
+              element: <OwnerCenterPage />,
+              children: [
                 { path: 'add', element: <AddCenter /> },
                 { path: 'edit/:centerId', element: <EditCenter /> },
-              ]
+              ],
             },
-          ]
+            { path: 'products/add', element: <ProductAdd /> },
+          ],
         },
-
       ],
     },
     {
@@ -105,8 +97,13 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: '404', element: <Page404 /> },
+
         { path: '*', element: <Navigate to="/404" /> },
       ],
+    },
+    {
+      path: 'edit/:userId',
+      element: <EditUserPage />,
     },
     {
       path: '*',

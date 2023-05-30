@@ -145,7 +145,7 @@ export default function UserPage() {
         });
     }
   }
-  
+
   console.log(userList)
 
   return (
@@ -192,7 +192,7 @@ export default function UserPage() {
                         <TableCell align="left">{userName}</TableCell>
 
                         <TableCell align="left">
-                          { userRoleDtos &&
+                          {userRoleDtos &&
                             userRoleDtos.map((userRole) => (
                               <div key={userRole.roleDtoResponse.id}>
                                 -&ensp;{userRole.roleDtoResponse.desc}
@@ -251,20 +251,19 @@ export default function UserPage() {
         }}
       >
 
-
-        <Link to={`info/${selectedUserId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
-          <MenuItem>
+        <MenuItem>
+          <Link to={`info/${selectedUserId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
             <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
             Info
-          </MenuItem>
-        </Link>
+          </Link>
+        </MenuItem>
 
-        <Link to={`edit/${selectedUserId}`} style={{ textDecoration: 'none', color: 'blue' }}>
-          <MenuItem>
+        <MenuItem>
+          <Link to={`edit/${selectedUserId}`} style={{ textDecoration: 'none', color: 'blue' }}>
             <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
             Edit
-          </MenuItem>
-        </Link>
+          </Link>
+        </MenuItem>
 
         <MenuItem disabled={!status} sx={{ color: 'error.main' }} onClick={handleOpenDelete}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />

@@ -36,9 +36,9 @@ export default function LoginForm() {
         <>
             <Toast ref={toast} />
             <Stack spacing={3}>
-                <TextField name="email"
+                <TextField name="account"
                            label="Email address"
-                           value={form.email || ""}
+                           value={form.account || ""}
                            onChange={(e) => handleChangeLogin(e)}
                 />
 

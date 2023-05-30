@@ -1,16 +1,14 @@
 // component
 import { useSelector } from "react-redux";
 import SvgColor from '../../../components/svg-color';
-
-// ----------------------------------------------------------------------
-
+import NavSection from '../../../components/nav-section';
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 const navConfig = (role) => [
     {
         title: 'dashboard',
-        path: `/dashboard/${role}/app`,
+        path: `/dashboard/app`,
         icon: icon('ic_analytics'),
     },
     {
@@ -38,7 +36,6 @@ const navConfig = (role) => [
 function NewNavConfig() {
     const isLogin = useSelector((state) => state.auth.login?.currentUser);
     const roles = isLogin.userDtoResponse.userRoleDtos.map(role => role.roleDtoResponse.name);
-    console.log('roles', roles)
 
     const prefix = "ROLE_";
     let currentRoles = [];
@@ -48,30 +45,24 @@ function NewNavConfig() {
             if (role === 'admin') {
                 console.log('1', navConfig(role))
                 currentRoles = [...navConfig(role)];
-                // return navConfig(role);
                 break;
             }
             if (role === 'owner') {
                 console.log('2', navConfig(role))
                 currentRoles = [...navConfig(role)];
-                // return navConfig(role);
                 break;
             }
             if (role === 'seller') {
                 console.log('3', navConfig(role))
                 currentRoles = [...navConfig(role)];
-                // return navConfig(role);
                 break;
             }
         };
     }
 
     return (
-        <>
-            {currentRoles}
-        </>
+        <NavSection data={currentRoles} />
     )
-    // return null;
 }
 
 

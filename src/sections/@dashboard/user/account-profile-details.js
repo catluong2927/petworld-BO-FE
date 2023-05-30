@@ -14,183 +14,96 @@ import {
     FormControlLabel,
     Unstable_Grid2 as Grid
 } from '@mui/material';
+import { autoBatchEnhancer } from '@reduxjs/toolkit';
 
 
 const AccountProfileDetails = (props) => {
-    const ROLE_API = `${process.env.REACT_APP_FETCH_API}/role`;
+    const ROLE_API = `${process.env.REACT_APP_FETCH_API}/roles`;
 
-    const [values, setValues] = useState({});
+    const [user, setUser] = useState({});
 
     const isLogin = useSelector((state) => state.auth.login?.currentUser);
 
     const [token, setToken] = useState('');
 
-    const [admin, setAdmin] = useState({
-        "id": 1,
-        "name": "ROLE_ADMIN",
-        "desc": "Quản trị viên"
-    });
+    const [roleList, setRoleList] = useState([]);
 
-    const [customer, setCustomer] = useState({
-        "id": 2,
-        "name": "ROLE_CUSTOMER",
-        "desc": "Khách hàng"
-    });
+    const [checkedRoles, setCheckedRoles] = useState([]);
 
-    const [owner, setOwner] = useState({
-        "id": 3,
-        "name": "ROLE_OWNER",
-        "desc": "Trung tâm dịch vụ"
-    });
-
-    const [statusAdmin, setStatusAdmin] = useState(false);
-    const [statusCustomer, setStatusCustomer] = useState(false);
-    const [statusOwner, setStatusOwner] = useState(false);
+    const [userRoles, setUserRoles] = useState([])
 
     useEffect(() => {
         setToken(isLogin.token)
     }, [isLogin])
 
     useEffect(() => {
-        setValues(props.user)
-    }, [props])
+        setUser(props.user)
+    }, [props.user])
 
     useEffect(() => {
-        // Kiểm tra xem người dùng đã có roleDtoResponse tương ứng hay chưa
-        if (values.userRoleDtos) {
-            setStatusAdmin(values.userRoleDtos.some(role => role.roleDtoResponse.id === admin.id));
-            setStatusCustomer(values.userRoleDtos.some(role => role.roleDtoResponse.id === customer.id));
-            setStatusOwner(values.userRoleDtos.some(role => role.roleDtoResponse.id === owner.id));
-        }
-    }, [values]);
+        axios
+            .get(`${ROLE_API}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then(res => {
+                setRoleList(res.data);
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [token]);
 
-    console.log(values)
+    const checkboxHandler = (event) => {
+        let updatedList = [...checkedRoles];
+        if (event.target.checked) {
+            updatedList = [...checkedRoles, event.target.value];
+        } else {
+            updatedList.splice(checkedRoles.indexOf(event.target.value), 1);
+        }
+        setCheckedRoles(updatedList);
+    };
 
-    // Admin
-    const handleAddRoleAdmin = (e) => {
-        e.preventDefault();
-        if (values.id) {
-            axios
-                .put(`${ROLE_API}/${values.id}`, admin, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-                    setStatusAdmin(false);
-                    window.location.reload();
-                })
-                .catch(err => {
-                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-                    throw err;
-                });
-        }
-    }
-    const handleRemoveRoleAdmin = (e) => {
-        e.preventDefault();
-        if (values.id) {
-            axios
-                .put(`${ROLE_API}/remove/${values.id}`, admin, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-                    setStatusAdmin(true);
-                    window.location.reload();
-                })
-                .catch(err => {
-                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-                    throw err;
-                });
-        }
+
+    // const handleAddRoleOwner = (e) => {
+    //     e.preventDefault();
+    //     if (values.id) {
+    //         axios
+    //             .put(`${ROLE_API}/${values.id}`, owner, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`
+    //                 }
+    //             })
+    //             .then(res => {
+    //                 props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
+    //                 setStatusOwner(false);
+    //                 window.location.reload();
+    //             })
+    //             .catch(err => {
+    //                 props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
+    //                 throw err;
+    //             });
+    //     }
+    // }
+
+    function checkedUsereRole(userRoles, roleName) {
+        console.log('userRoles: ', userRoles)
+        console.log('roleName: ', roleName)
+        if (userRoles.indexOf(roleName) !== -1) return true;
+        return false;
     }
 
-    const handleAddRoleCustomer = (e) => {
-        e.preventDefault();
-        if (values.id) {
-            axios
-                .put(`${ROLE_API}/${values.id}`, customer, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-                    setStatusCustomer(false);
-                    window.location.reload();
-                })
-                .catch(err => {
-                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-                    throw err;
-                });
-        }
-    }
-    const handleRemoveRoleCustomer = (e) => {
-        e.preventDefault();
-        if (values.id) {
-            axios
-                .put(`${ROLE_API}/remove/${values.id}`, customer, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-                    setStatusCustomer(true);
-                    window.location.reload();
-                })
-                .catch(err => {
-                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-                    throw err;
-                });
-        }
-    }
-    const handleAddRoleOwner = (e) => {
-        e.preventDefault();
-        if (values.id) {
-            axios
-                .put(`${ROLE_API}/${values.id}`, owner, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-                    setStatusOwner(false);
-                    window.location.reload();
-                })
-                .catch(err => {
-                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-                    throw err;
-                });
-        }
-    }
-    const handleRemoveRoleOwner = (e) => {
-        e.preventDefault();
-        if (values.id) {
-            axios
-                .put(`${ROLE_API}/remove/${values.id}`, owner, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-                    setStatusOwner(true);
-                    window.location.reload();
-                })
-                .catch(err => {
-                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-                    throw err;
-                });
-        }
-    }
+    // if (values && values.userDtoResponse) {
+    //     const newRoles = values.userDtoResponse.userRoleDtos?.map(role => role.roleDtoResponse.name);
+    //     roles = newRoles;
+    // }
 
 
 
+    // console.log('values: ', values);
+    console.log('roles 1: ', userRoles)
+    // console.log('checkedRoles: ',checkedRoles);
 
     return (
         <form
@@ -199,75 +112,41 @@ const AccountProfileDetails = (props) => {
         >
             <Card>
                 <CardHeader
-                    title="All roles"
+                    title="Identity management"
+                    sx={{ fontSize: 60, paddingBottom: '20px' }}
                 />
                 <CardContent sx={{ pt: 0 }}>
-                    <Box sx={{ m: -1.5 }}>
+                    <Box sx={{ m: -1.5, mr: 'auto', ml: 'auto' }}>
                         <Grid
                             container
-                            spacing={3}
+                            spacing={1}
                         >
-                            <Grid xs={12} md={12} container spacing={4}>
-                                <Grid xs={12} md={6} lg={3}>
-                                    1
-                                </Grid>
-                                <Grid xs={12} md={6} lg={3}>
-                                    Quản trị viên
-                                </Grid>
-                                <Grid xs={12} md={6} lg={3}>
-                                    <Button variant="contained" color="success" disabled={statusAdmin} onClick={(e) => handleAddRoleAdmin(e)}>
-                                        Add
-                                    </Button>
-                                </Grid>
-                                <Grid xs={12} md={6} lg={3}>
-                                    <Button variant="contained" color="error" disabled={!statusAdmin} onClick={(e) => handleRemoveRoleAdmin(e)}>
-                                        Delete
-                                    </Button>
-                                </Grid>
-                            </Grid>
 
-                            <Grid xs={12} md={12} container spacing={4}>
-                                <Grid xs={6} md={3} >
-                                    2
+                            {roleList.map((role) => (
+                                <Grid key={role.name} xs={12} md={12} container spacing={1} sx={{ padding: '10px' }}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                id={role.id}
+                                                value={role.id}
+                                                onChange={checkboxHandler}
+                                                checked={checkedUsereRole(userRoles, role.name)}
+                                            />
+                                        }
+                                        label={role.desc}
+                                    />
                                 </Grid>
-                                <Grid xs={6} md={3} >
-                                    Khách hàng
-                                </Grid>
-                                <Grid xs={6} md={3} >
-                                    <Button variant="contained" color="success" disabled={statusCustomer} onClick={(e) => handleAddRoleCustomer(e)}>
-                                        Add
-                                    </Button>
-                                </Grid>
-                                <Grid xs={6} md={3} >
-                                    <Button variant="contained" color="error" disabled={!statusCustomer} onClick={(e) => handleRemoveRoleCustomer(e)}>
-                                        Delete
-                                    </Button>
-                                </Grid>
-                            </Grid>
-
-                            <Grid xs={12} md={12} container spacing={4}>
-                                <Grid xs={6} md={3} >
-                                    3
-                                </Grid>
-                                <Grid xs={6} md={3} >
-                                    Trung tâm dịch vụ
-                                </Grid>
-                                <Grid xs={6} md={3} >
-                                    <Button variant="contained" color="success" disabled={statusOwner} onClick={(e) => handleAddRoleOwner(e)}>
-                                        Add
-                                    </Button>
-                                </Grid>
-                                <Grid xs={6} md={3} >
-                                    <Button variant="contained" color="error" disabled={!statusOwner} onClick={(e) => handleRemoveRoleOwner(e)}>
-                                        Delete
-                                    </Button>
-                                </Grid>
-                            </Grid>
+                            ))}
 
                         </Grid>
+                        <Divider />
+                        <CardActions sx={{ justifyContent: 'flex-end' }}>
+                            <Button variant="contained">
+                                Save details
+                            </Button>
+                        </CardActions>
                     </Box>
                 </CardContent>
-                <Divider />
             </Card>
         </form>
     );
