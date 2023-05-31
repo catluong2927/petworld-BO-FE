@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
 // @mui
@@ -54,6 +54,8 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
+  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -74,7 +76,7 @@ export default function ProductsPage() {
 
   const [categories, setCategories] = useState([]);
 
-  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
+  
 
   useEffect(() => {
     axios
@@ -143,11 +145,11 @@ export default function ProductsPage() {
           <Typography variant="h4" gutterBottom>
             Product Management
           </Typography>
-          {/* <Link to={`add`}>
+          <Link to={`add`}>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               New Product
             </Button>
-          </Link> */}
+          </Link>
         </Stack>
 
         <Card>
@@ -222,7 +224,7 @@ export default function ProductsPage() {
           },
         }}
       >
-        <Link to={`#`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+        <Link to={`detail/${selectedProductId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
           <MenuItem>
             <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
             Detail
