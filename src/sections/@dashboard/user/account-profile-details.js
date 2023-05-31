@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import axios from 'axios';
 import {
@@ -10,19 +10,18 @@ import {
     CardHeader,
     Divider,
     Checkbox,
-    TextField,
     FormControlLabel,
     Unstable_Grid2 as Grid
 } from '@mui/material';
-import { autoBatchEnhancer } from '@reduxjs/toolkit';
-
 
 const AccountProfileDetails = (props) => {
-    const ROLE_API = `${process.env.REACT_APP_FETCH_API}/roles`;
+    const ROLE_API = `${process.env.REACT_APP_FETCH_API}/userroles`;
 
-    const [user, setUser] = useState({});
+    const USER_ROLE_API = `${process.env.REACT_APP_FETCH_API}/role`;
 
     const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+    const [data, setData] = useState({})
 
     const [token, setToken] = useState('');
 
@@ -30,17 +29,21 @@ const AccountProfileDetails = (props) => {
 
     const [checkedRoles, setCheckedRoles] = useState([]);
 
-    const [userRoles, setUserRoles] = useState([])
+    const { user } = props;
+
+    useEffect(() => {
+        const roleNames = user && user.userRoleDtos?.map((role) => role.roleDtoResponse.id);
+        if (roleNames) {
+            setCheckedRoles(roleNames);
+        }
+    }, [user]);
 
     useEffect(() => {
         setToken(isLogin.token)
     }, [isLogin])
 
     useEffect(() => {
-        setUser(props.user)
-    }, [props.user])
-
-    useEffect(() => {
+        if(token) {
         axios
             .get(`${ROLE_API}`, {
                 headers: {
@@ -53,57 +56,48 @@ const AccountProfileDetails = (props) => {
             .catch(err => {
                 console.log(err)
             })
+        }
     }, [token]);
 
     const checkboxHandler = (event) => {
         let updatedList = [...checkedRoles];
         if (event.target.checked) {
-            updatedList = [...checkedRoles, event.target.value];
+            updatedList = [...checkedRoles, +(event.target.value)];
         } else {
-            updatedList.splice(checkedRoles.indexOf(event.target.value), 1);
+            updatedList.splice(checkedRoles.indexOf(+(event.target.value)), 1);
         }
         setCheckedRoles(updatedList);
     };
 
-
-    // const handleAddRoleOwner = (e) => {
-    //     e.preventDefault();
-    //     if (values.id) {
-    //         axios
-    //             .put(`${ROLE_API}/${values.id}`, owner, {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`
-    //                 }
-    //             })
-    //             .then(res => {
-    //                 props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
-    //                 setStatusOwner(false);
-    //                 window.location.reload();
-    //             })
-    //             .catch(err => {
-    //                 props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
-    //                 throw err;
-    //             });
-    //     }
-    // }
-
-    function checkedUsereRole(userRoles, roleName) {
-        console.log('userRoles: ', userRoles)
-        console.log('roleName: ', roleName)
-        if (userRoles.indexOf(roleName) !== -1) return true;
+    function checkedUserRole(userRoles, roleName) {
+        if (userRoles && userRoles.indexOf(roleName) !== -1) return true;
         return false;
     }
 
-    // if (values && values.userDtoResponse) {
-    //     const newRoles = values.userDtoResponse.userRoleDtos?.map(role => role.roleDtoResponse.name);
-    //     roles = newRoles;
-    // }
+    const handleEnhancedAuthorization = async () => {
+        console.log(1)
+        if (checkedRoles) {
+            console.log(2)
+            console.log('checkedRoles: ', checkedRoles)
+            console.log(token)
+            await axios
+                .put(`${USER_ROLE_API}/${user.id}?roles=${checkedRoles}`, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then(res => {
+                    props.toast.current.show({ severity: 'success', summary: 'Success', detail: 'Editing is successful', life: 3000 });
+                    window.location.reload();
+                })
+                .catch(err => {
+                    props.toast.current.show({ severity: 'error', summary: 'Error', detail: `Error: ${err}`, life: 3000 });
+                    throw err;
+                });
+        }
+    }
 
-
-
-    // console.log('values: ', values);
-    console.log('roles 1: ', userRoles)
-    // console.log('checkedRoles: ',checkedRoles);
+    console.log('checkedRoles: ', checkedRoles)
 
     return (
         <form
@@ -127,10 +121,10 @@ const AccountProfileDetails = (props) => {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                id={role.id}
+                                                id={role.id.toString()}
                                                 value={role.id}
                                                 onChange={checkboxHandler}
-                                                checked={checkedUsereRole(userRoles, role.name)}
+                                                checked={checkedUserRole(checkedRoles, role.id)}
                                             />
                                         }
                                         label={role.desc}
@@ -141,7 +135,7 @@ const AccountProfileDetails = (props) => {
                         </Grid>
                         <Divider />
                         <CardActions sx={{ justifyContent: 'flex-end' }}>
-                            <Button variant="contained">
+                            <Button variant="contained" onClick={() => handleEnhancedAuthorization()}>
                                 Save details
                             </Button>
                         </CardActions>

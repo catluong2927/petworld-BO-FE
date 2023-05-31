@@ -180,7 +180,7 @@ const DetailUserCenter = (props) => {
                                         >
                                             Delete
                                         </Button>
-                                        <Link to={`/dashboard/centers/owner/edit/${center.id}`}>
+                                        <Link to={`edit/${center.id}`}>
                                             <Button
                                                 variant="contained"
                                                 startIcon={<EditIcon />}

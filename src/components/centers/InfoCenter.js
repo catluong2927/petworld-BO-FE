@@ -38,12 +38,16 @@ function InfoCenter() {
             noValidate
         >
             <Card>
-                <CardHeader title="Center's Detail" style={{paddingBottom: '20px', fontSize:'100px'}}/>
+                <CardHeader
+                    title="Center's Detail"
+                    style={{ paddingBottom: '20px', fontSize: '24px' }}
+                />
+
                 <CardContent sx={{ pt: 0 }}>
                     <Box sx={{ m: -1.5 }}>
                         <Grid container spacing={3}>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Name"
@@ -55,7 +59,7 @@ function InfoCenter() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Phone"
@@ -67,7 +71,7 @@ function InfoCenter() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Email"
@@ -79,7 +83,7 @@ function InfoCenter() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Address"
@@ -91,22 +95,20 @@ function InfoCenter() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
-                                <Chip 
-                                    label={center.isActive ? 'Active' : 'Inactive'} 
-                                    style={center.isActive ? 
-                                            {backgroundColor:'#C7F2A4', color:'#5F8D4E', fontSize:'15px', fontWeight:'bold'} : 
-                                            {backgroundColor:'#FFA8A8', color:'#DF2E38', fontSize:'15px', fontWeight:'bold'}
-                                        } 
-                                    variant="outlined" 
+                            <Grid xs={12} md={6}>
+                                <Chip
+                                    label={center.isActive ? 'Active' : 'Inactive'}
+                                    style={center.isActive ?
+                                        { backgroundColor: '#C7F2A4', color: '#5F8D4E', fontSize: '15px', fontWeight: 'bold' } :
+                                        { backgroundColor: '#FFA8A8', color: '#DF2E38', fontSize: '15px', fontWeight: 'bold' }
+                                    }
+                                    variant="outlined"
                                 />
                             </Grid>
 
                         </Grid>
                     </Box>
                 </CardContent>
-                <Divider />
-
             </Card>
         </form>
     );

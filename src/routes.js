@@ -65,8 +65,8 @@ export default function Router() {
             },
             {
               path: 'centers',
-              element: <CenterPage />,
               children: [
+                { path: '', element: <CenterPage /> },
                 { path: 'info/:centerId', element: <InfoCenter /> },
               ],
             },
@@ -81,8 +81,8 @@ export default function Router() {
           children: [
             {
               path: 'centers',
-              element: <OwnerCenterPage />,
               children: [
+                { path: '', element: <OwnerCenterPage /> },
                 { path: 'add', element: <AddCenter /> },
                 { path: 'edit/:centerId', element: <EditCenter /> },
               ],

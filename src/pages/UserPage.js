@@ -251,12 +251,12 @@ export default function UserPage() {
         }}
       >
 
-        <MenuItem>
-          <Link to={`info/${selectedUserId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+        <Link to={`info/${selectedUserId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+          <MenuItem>
             <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
             Info
-          </Link>
-        </MenuItem>
+          </MenuItem>
+        </Link>
 
         <MenuItem>
           <Link to={`edit/${selectedUserId}`} style={{ textDecoration: 'none', color: 'blue' }}>

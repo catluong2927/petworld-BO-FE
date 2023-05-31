@@ -83,16 +83,22 @@ export default function CentersPage() {
 
 
     useEffect(() => {
-        axios
-            .get(`${CENTER_API}/all?size=${size}&page=${page}&sort=id,desc`)
-            .then(res => {
-                setCenters(res.data.content);
-                setTotalElements(res.data.totalElements);
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }, [size, page])
+        if (token) {
+            axios
+                .get(`${CENTER_API}/all?size=${size}&page=${page}&sort=id,desc`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then(res => {
+                    setCenters(res.data.content);
+                    setTotalElements(res.data.totalElements);
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    }, [size, page, token])
 
     const handleOpenMenu = (event, centerId, status) => {
         setOpen(event.currentTarget);
@@ -149,11 +155,6 @@ export default function CentersPage() {
                     <Typography variant="h4" gutterBottom>
                         Center Management
                     </Typography>
-                    {/* <Link to={`/dashboard/centers/new`}>
-                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                            New Center
-                        </Button>
-                    </Link> */}
                 </Stack>
                 <Card>
                     <Scrollbar>
@@ -164,13 +165,13 @@ export default function CentersPage() {
                                     {centers.map((center, index) => {
                                         const { id, name, address, email, isActive, phone } = center;
                                         return (
-                                            <TableRow hover key={id} tabIndex={-1}>
-                                                <TableCell align="left">{id}</TableCell>
-                                                <TableCell align="left">{name}</TableCell>
-                                                <TableCell align="left">{address}</TableCell>
-                                                <TableCell align="left">{email}</TableCell>
-                                                <TableCell align="left">{phone}</TableCell>
-                                                <TableCell align="left">{isActive}</TableCell>
+                                            <TableRow hover key={index} tabIndex={-1}>
+                                                <TableCell align="left">{id.toString()}</TableCell>
+                                                <TableCell align="left">{name.toString()}</TableCell>
+                                                <TableCell align="left">{address.toString()}</TableCell>
+                                                <TableCell align="left">{email.toString()}</TableCell>
+                                                <TableCell align="left">{phone.toString()}</TableCell>
+                                                <TableCell align="left">{isActive.toString()}</TableCell>
                                                 <TableCell align="left">
                                                     <Label color={isActive ? 'success' : 'error'}> {isActive ? 'Active' : 'InActive'} </Label>
                                                 </TableCell>
@@ -184,6 +185,7 @@ export default function CentersPage() {
                                                     </IconButton>
                                                 </TableCell>
                                             </TableRow>
+
                                         );
                                     })}
                                 </TableBody>
