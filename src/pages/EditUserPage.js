@@ -18,8 +18,6 @@ const Page = () => {
     const USER_API = `${process.env.REACT_APP_FETCH_API}/users`;
     const { userId } = useParams();
     const [user, setUser] = useState({});
-    const [newAvatar, setNewAvatar] = useState('')
-    const [currentUser, setCurrentUser] = useState(user)
     const toast = useRef(null);
     const isLogin = useSelector((state) => state.auth.login?.currentUser);
     const [token, setToken] = useState('');
@@ -45,21 +43,7 @@ const Page = () => {
         }
     }, [userId, token]);
 
-    useEffect(() => {
-        setCurrentUser(prevUser => ({
-            address: user.address,
-            avatar: newAvatar,
-            email: user.email,
-            fullName: user.fullName,
-            id: user.id,
-            isStatus: user.isStatus,
-            phone: user.phone,
-            rememberToken: user.rememberToken,
-            userName: user.userName
-        }));
-    }, [newAvatar]);
-
-    console.log(currentUser)
+    console.log(user)
 
     return (
         <>
@@ -72,7 +56,7 @@ const Page = () => {
                     <Stack spacing={3}>
                         <div>
                             <Typography variant="h4">
-                                Edit User
+                                Edit User's Role
                             </Typography>
                         </div>
                         <div>
@@ -85,14 +69,14 @@ const Page = () => {
                                     md={6}
                                     lg={4}
                                 >
-                                    <AccountProfile user={(newAvatar) ? currentUser : user} setNewAvatar={setNewAvatar} />
+                                    <AccountProfile user={user}/>
                                 </Grid>
                                 <Grid
                                     xs={12}
                                     md={6}
                                     lg={8}
                                 >
-                                    <AccountProfileDetails currentUser = {(newAvatar) ? currentUser : user} toast={toast}/>
+                                    <AccountProfileDetails user={user} toast={toast}/>
                                 </Grid>
                             </Grid>
                         </div>

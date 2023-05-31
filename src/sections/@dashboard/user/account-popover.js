@@ -2,13 +2,10 @@ import {
   Avatar,
   Box,
   Card,
-  CardActions,
   CardContent,
   Divider,
   Typography
 } from '@mui/material';
-
-import UploadImage from '../../../components/upload/UploadImage';
 
 
 function AccountProfile(props) {
@@ -52,9 +49,6 @@ function AccountProfile(props) {
         </Box>
       </CardContent>
       <Divider />
-      <CardActions>
-        <UploadImage setNewAvatar={props.setNewAvatar}/>
-      </CardActions>
     </Card>
   )
 };

@@ -10,7 +10,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Toast } from 'primereact/toast';
 
-
 import {
   Card,
   Table,
@@ -18,7 +17,6 @@ import {
   Avatar,
   Button,
   Popover,
-  Checkbox,
   TableRow,
   MenuItem,
   TableBody,
@@ -37,9 +35,6 @@ import { UserListHead } from '../sections/@dashboard/user';
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
-
-
-
 
 const TABLE_HEAD = [
   { id: 'id', label: '#', alignRight: false },
@@ -104,7 +99,6 @@ export default function UserPage() {
   }, [rowsPerPage, page, token])
 
   const handleOpenMenu = (event, userId, isStatus) => {
-    console.log(userId);
     setOpen(event.currentTarget);
     setSelectedUserId(userId);
     setStatus(isStatus);
@@ -112,21 +106,6 @@ export default function UserPage() {
 
   const handleCloseMenu = () => {
     setOpen(null);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -213,7 +192,7 @@ export default function UserPage() {
                         <TableCell align="left">{userName}</TableCell>
 
                         <TableCell align="left">
-                          {
+                          { userRoleDtos &&
                             userRoleDtos.map((userRole) => (
                               <div key={userRole.roleDtoResponse.id}>
                                 -&ensp;{userRole.roleDtoResponse.desc}
