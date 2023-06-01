@@ -156,10 +156,10 @@ export default function PackagePage() {
                             <Table>
                                 <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={totalElements} />
                                 <TableBody>
-                                    {packages.map((center) => {
+                                    {packages.map((center, index) => {
                                         const { id, packageName, centerName, price, image, description, isActive, status } = center;
                                         return (
-                                            <TableRow hover key={id} tabIndex={-1}>
+                                            <TableRow hover key={index} tabIndex={-1}>
                                                 <TableCell align="left">{id}</TableCell>
                                                 <TableCell align="left">
                                                     <Avatar alt={centerName} src={image} />

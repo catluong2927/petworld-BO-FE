@@ -27,8 +27,8 @@ const navConfig = (role) => [
         icon: icon('ic_center'),
     },
     {
-        title: 'Package',
-        path: `/dashboard/${role}/package`,
+        title: 'package',
+        path: `/dashboard/${role}/packages`,
         icon: icon('ic_package'),
     },
 ];

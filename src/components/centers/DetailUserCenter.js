@@ -91,8 +91,6 @@ const DetailUserCenter = (props) => {
         }
     }
 
-    console.log(center)
-
     return (
         <>
             <Toast ref={toast} />
@@ -207,12 +205,12 @@ const DetailUserCenter = (props) => {
                             <Box sx={{ m: -1.5 }}>
                                 <Grid container spacing={3}>
 
-                                    <Grid item xs={12} md={12}>
+                                    <Grid xs={12} md={12}>
                                         <div>{"Hiện tại, bạn chưa có trung tâm. Bạn có muốn tạo trung tâm không?"}</div>
                                     </Grid>
-                                    <Grid item xs={12} md={12}>
+                                    <Grid xs={12} md={12}>
                                         <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                            <Link to={`/dashboard/centers/owner/add`}>
+                                            <Link to={`add`}>
                                                 <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                                                     New Center
                                                 </Button>

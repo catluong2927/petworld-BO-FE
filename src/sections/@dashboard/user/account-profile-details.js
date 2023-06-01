@@ -66,7 +66,7 @@ const AccountProfileDetails = (props) => {
         } else {
             updatedList.splice(checkedRoles.indexOf(+(event.target.value)), 1);
         }
-        setCheckedRoles(updatedList);
+        setCheckedRoles(updatedList.sort());
     };
 
     function checkedUserRole(userRoles, roleName) {
@@ -75,11 +75,7 @@ const AccountProfileDetails = (props) => {
     }
 
     const handleEnhancedAuthorization = async () => {
-        console.log(1)
         if (checkedRoles) {
-            console.log(2)
-            console.log('checkedRoles: ', checkedRoles)
-            console.log(token)
             await axios
                 .put(`${USER_ROLE_API}/${user.id}?roles=${checkedRoles}`, data, {
                     headers: {

@@ -33,7 +33,6 @@ import InfoUserPage from './pages/InfoUserPage'
 import AdminPrivateRoute from "./hoc/AdminPrivateRoute";
 import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
 import SellerPrivateRoute from './hoc/SellerPrivateRoute';
-import PrivateRoute from './hoc/PrivateRoute';
 
 export default function Router() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
@@ -71,6 +70,10 @@ export default function Router() {
               ],
             },
             { path: 'products', element: <ProductsPage /> },
+            { path: 'packages', children: [
+              { path: '', element: <PackagePage /> },
+              { path: 'info/:packageId', element: <InfoPackage /> },
+            ],},
           ],
         },
 
@@ -90,6 +93,7 @@ export default function Router() {
             { path: 'products/add', element: <ProductAdd /> },
           ],
         },
+
       ],
     },
     {
@@ -100,10 +104,6 @@ export default function Router() {
 
         { path: '*', element: <Navigate to="/404" /> },
       ],
-    },
-    {
-      path: 'edit/:userId',
-      element: <EditUserPage />,
     },
     {
       path: '*',

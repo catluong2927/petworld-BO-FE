@@ -45,7 +45,7 @@ function InfoPackage() {
                     <Box sx={{ m: -1.5 }}>
                         <Grid container spacing={3}>
 
-                            <Grid item xs={12} md={12}>
+                            <Grid xs={12} md={12}>
                                 <Avatar
                                     src={packages.image}
                                     sx={{
@@ -58,7 +58,7 @@ function InfoPackage() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Center's name"
@@ -70,7 +70,7 @@ function InfoPackage() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Package name"
@@ -82,7 +82,7 @@ function InfoPackage() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Price"
@@ -94,7 +94,7 @@ function InfoPackage() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     label="Description"
@@ -106,7 +106,7 @@ function InfoPackage() {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={12}>
+                            <Grid xs={12} md={12}>
                                 <CardActions sx={{ justifyContent: 'flex-start' }}>
                                     <Chip
                                         label={packages.isActive ? 'Active' : 'Inactive'}
