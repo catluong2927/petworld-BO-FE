@@ -21,7 +21,7 @@ import InfoCenter from "./components/centers/InfoCenter";
 
 // Package
 import PackagePage from './pages/package/PackagePage';
-import SellerPackageDetailPage from "./pages/package/SellerPackageDetailPage";
+import PackageDetailPage from "./pages/package/PackageDetailPage";
 import InfoPackage from "./components/package/InfoPackage";
 
 // User
@@ -70,10 +70,12 @@ export default function Router() {
               ],
             },
             { path: 'products', element: <ProductsPage /> },
-            { path: 'packages', children: [
-              { path: '', element: <PackagePage /> },
-              { path: 'info/:packageId', element: <InfoPackage /> },
-            ],},
+            {
+              path: 'packages', children: [
+                { path: '', element: <PackagePage /> },
+                { path: 'info/:packageId', element: <InfoPackage /> },
+              ],
+            },
           ],
         },
 
@@ -91,6 +93,12 @@ export default function Router() {
               ],
             },
             { path: 'products/add', element: <ProductAdd /> },
+            {
+              path: 'packages', children: [
+                { path: '', element: <PackageDetailPage /> },
+                { path: 'info/:packageId', element: <InfoPackage /> },
+              ],
+            },
           ],
         },
 
