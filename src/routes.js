@@ -11,6 +11,8 @@ import Page404 from './pages/Page404';
 // Product
 import ProductsPage from './pages/ProductsPage';
 import ProductAdd from './pages/ProductAdd';
+import ProductEdit from './pages/ProductEdit';
+import ProductDetail from './pages/ProductDetail';
 
 // Center
 import CenterPage from "./pages/center/CentersPage";
@@ -47,6 +49,7 @@ export default function Router() {
       element: isLogin ? <DashboardLayout /> : <Navigate to='/login' />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
+
         { path: 'app', element: <DashboardAppPage /> },
 
         // Admin
@@ -69,7 +72,15 @@ export default function Router() {
                 { path: 'info/:centerId', element: <InfoCenter /> },
               ],
             },
-            { path: 'products', element: <ProductsPage /> },
+            {
+              path: 'products',
+              children: [
+                { path: '', element: <ProductsPage /> },
+                { path: 'add', element: <ProductAdd /> },
+                { path: 'edit/:id', element: <ProductEdit /> },
+                { path: 'detail/:id', element: <ProductDetail /> },
+              ]
+            },
             {
               path: 'packages', children: [
                 { path: '', element: <PackagePage /> },

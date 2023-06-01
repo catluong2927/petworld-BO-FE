@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
+import { useSelector } from "react-redux";
 // @mui
 import {
   formControlClasses,
@@ -54,6 +55,8 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
+  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -72,13 +75,24 @@ export default function ProductsPage() {
 
   const [products, setProducts] = useState([]);
 
-  const [categories, setCategories] = useState([]);
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
 
-  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/products`;
+  const [token, setToken] = useState('');
 
   useEffect(() => {
+    setToken(isLogin.token)
+  }, [isLogin])
+
+  
+
+  useEffect(() => {
+    if(token){
     axios
-      .get(`${PRODUCT_API}?size=${size}&page=${page}&categoryIds=${categories}`)
+      .get(`${PRODUCT_API}?size=${size}&page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then((res) => {
         setProducts(res.data.content);
         setTotalElements(res.data.totalElements);
@@ -86,7 +100,8 @@ export default function ProductsPage() {
       .catch((err) => {
         console.log(err);
       });
-  }, [size, page]);
+    }
+  }, [size, page, token]);
 
   const handleOpenMenu = (event, productId, status) => {
     setOpen(event.currentTarget);
@@ -120,7 +135,11 @@ export default function ProductsPage() {
     console.log(productId);
     if (productId) {
       axios
-        .delete(`${PRODUCT_API}/${productId}`)
+        .delete(`${PRODUCT_API}/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then((res) => {
           toast.current.show({ severity: 'success', summary: 'Success', detail: 'Delete successfully', life: 3000 });
           setConfirmDelete(false);
@@ -172,7 +191,7 @@ export default function ProductsPage() {
                         <TableCell align="left">{sale}</TableCell>
                         <TableCell align="left">{markDtoResponse.tag}</TableCell>
                         <TableCell align="left">
-                          <Label color={status ? 'success' : 'error'}> {status ? 'Active' : 'InActive'} </Label>
+                          <Label color={(status) ? 'success' : 'error'}> {(status) ? 'Active' : 'InActive'} </Label>
                         </TableCell>
 
                         <TableCell align="right">
@@ -222,7 +241,7 @@ export default function ProductsPage() {
           },
         }}
       >
-        <Link to={`#`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+        <Link to={`detail/${selectedProductId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
           <MenuItem>
             <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
             Detail

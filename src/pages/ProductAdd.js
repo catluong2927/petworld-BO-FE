@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
-
+import { Toast } from 'primereact/toast';
 import {
   Box,
   Button,
@@ -16,272 +16,310 @@ import {
 } from '@mui/material';
 import UploadImage from '../components/upload/UploadImage';
 
-
 function ProductAdd() {
-    const [image, setImage] = useState('');
-    const [image1, setImage1] = useState('');
-    const [image2, setImage2] = useState('');
-    const [image3, setImage3] = useState('');
-    const [image4, setImage4] = useState('');
-    const [image5, setImage5] = useState('');
-  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/products`;
-  const [product, setProduct] = useState({});
+  const toast = useRef();
+
+  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
+
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+  const [token, setToken] = useState('');
+
+  const [image, setImage] = useState('');
+
+  const [image1, setImage1] = useState('');
+
+  const [product, setProduct] = useState({
+    name: '',
+    description: '',
+    price: '',
+    productCode: '',
+    protein: '',
+    fats: '',
+    carbohydrates: '',
+    minerals: '',
+    vitamins: '',
+    animal: '',
+    sale: '',
+    markDtoRequest: { id: '' },
+    image: '',
+    imageDetail: [],
+  });
 
 
+  useEffect(() => {
+    setToken(isLogin.token)
+  }, [isLogin])
 
-  function handleChange(event){
-    setProduct({
-      ...product,
-      [event.target.name]: event.target.value
-    });
-  }
-  console.log(product)
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
 
-  function handleSubmit(){
+
+  const handleImageChange = (imageUrl) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      image: imageUrl,
+    }));
+  };
+  
+
+  useEffect(() => {
+    if (image1) {
+      const newImageDetail = [...product.imageDetail, { url: image1 }];
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        imageDetail: newImageDetail,
+      }));
+    }
+  }, [image1]);
+  
+  const getMarkHandler = (e) => {
+    const { name, value } = e.target;
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      markDtoRequest: { id: value },
+    }));
+  };
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
     axios
-      .post(`${PRODUCT_API}`, product)
-      .then(res => {
-        alert(`Create product ${JSON.stringify(
-          res.data
-        )} successfully !!! `
-        );
-        window.location.href = "/products"
+      .post(`${PRODUCT_API}`, product, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       })
-      .catch(err => {
-        throw err;
+      .then((res) => {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Create product successfully',
+          life: 3000,
+        });
+        window.location.href = '/dashboard/products';
+      })
+      .catch((err) => {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create product Fail', life: 10000 });
+        window.location.href = '/dashboard/products/add';
       });
-  }
+    };
 
+    console.log('test', product)
+    
+    return (
+      <>
+      <Toast ref={toast} />
+      <form autoComplete="off" noValidate>
+        <Card>
+          <CardHeader title="Add Product" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Name"
+                    helperText="Please enter product name"
+                    name="name"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
 
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Description"
+                    helperText="Please enter product description"
+                    name="description"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
 
-  return (
-    <form
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit()}
-    >
-      <Card>
-        <CardHeader title="Add Product" />
-        <CardContent sx={{ pt: 0 }}>
-          <Box sx={{ m: -1.5 }}>
-            <Grid container spacing={3}>
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product name"
-                  label="Name"
-                  name="name"
-                  value={product.name}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product price"
+                    label="Price"
+                    name="price"
+                    onChange={(e) => handleChange(e)}
+                    type="number"
+                    inputProps={{ pattern: '[0-9]*' }}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product code"
+                    label="ProductCode"
+                    name="productCode"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product protein"
+                    label="Protein"
+                    name="protein"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product fats"
+                    label="Fats"
+                    name="fats"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product carbohydrates"
+                    label="Carbohydrates"
+                    name="carbohydrates"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product minerals"
+                    label="Minerals"
+                    name="minerals"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product vitamins"
+                    label="Vitamins"
+                    name="vitamins"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product animal"
+                    label="Animal"
+                    name="animal"
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please enter product sale"
+                    label="Sale"
+                    name="sale"
+                    type="number"
+                    inputProps={{ pattern: '[0-9]*' }}
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Mark"
+                    name="id"
+                    type="number"
+                    inputProps={{ pattern: '[0-9]*' }}
+                    onChange={(e) => getMarkHandler(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Category"
+                    name="categoryId"
+                    type="number"
+                    inputProps={{ pattern: '[0-9]*' }}
+                    onChange={(e) => handleChange(e)}
+                    required
+                  />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please choose the product's profile picture"
+                    label="Image"
+                    name="image"
+                    value={image || ''}
+                    disabled={Boolean(image)}
+                    required
+                  />
+                  <UploadImage setNewAvatar={handleImageChange} />
+                </Grid>
+
+                <Grid xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    helperText="Please choose the detailed photos of the product"
+                    label="ImageDetail"
+                    name="url"
+                    value={image1 || ''}
+                    onChange={(e) => handleChange(e)}
+                    required
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                  <UploadImage setNewAvatar={setImage1} />
+                </Grid>
+
+                <div className="image-grid-container">
+                  <div className="image-grid">
+                    {product.imageDetail &&
+                      product.imageDetail.map((image, index) => (
+                        <div className="image-container" key={`image${index}`}>
+                          <img src={image.url} alt={index} />
+                        </div>
+                      ))}
+                  </div>
+                </div>
               </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product description"
-                  label="Description"
-                  name="description"
-                  value={product.description}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product image"
-                  label="Image"
-                  name="image"
-                  value={product.image}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product price"
-                  label="Price"
-                  name="price"
-                  value={product.price}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product code"
-                  label="ProductCode"
-                  name="productCode"
-                  value={product.productCode}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product protein"
-                  label="Protein"
-                  name="protein"
-                  value={product.protein}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product fats"
-                  label="Fats"
-                  name="fats"
-                  value={product.fats}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product carbohydrates"
-                  label="Carbohydrates"
-                  name="carbohydrates"
-                  value={product.carbohydrates}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product minerals"
-                  label="Minerals"
-                  name="minerals"
-                  value={product.minerals}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product vitamins"
-                  label="Vitamins"
-                  name="vitamins"
-                  value={product.vitamins}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product animal"
-                  label="Animal"
-                  name="animal"
-                  value={product.animal}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  helperText="Please enter product sale"
-                  label="Sale"
-                  name="sale"
-                  value={product.sale}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid>
-
-               <Grid xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="Mark"
-                  name="markDtoRequest.id"
-                  type = "number"
-                  value={product.markDtoRequest.id}
-                  onChange={(e) => handleChange(e)}
-                  required
-                />
-              </Grid> 
-
-              <Grid xs={12} md={4}> 
-                <TextField
-                fullWidth
-                label="ImageDetai(1)"
-                name="imageDetailList.url"
-                onChange={(e) => handleChange(e)}
-                required
-                />
-              </Grid>
-             
-                 
-              <Grid xs={12} md={4}> 
-                <TextField
-                fullWidth
-                label="ImageDetai(2)"
-                name="imageDetailList.url" 
-                onChange={(e) => handleChange(e)}
-                required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}> 
-                <TextField
-                fullWidth
-                label="ImageDetai(3)"
-                name="imageDetailList.url" 
-                onChange={(e) => handleChange(e)}
-                required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}> 
-                <TextField
-                fullWidth
-                label="ImageDetai(4)"
-                name="imageDetailList.url" 
-                onChange={(e) => handleChange(e)}
-                required
-                />
-              </Grid>
-
-              <Grid xs={12} md={4}> 
-                <TextField
-                fullWidth
-                label="ImageDetai(5)"
-                name="imageDetailList.url" 
-                onChange={(e) => handleChange(e)}
-                required
-                />
-              </Grid>
-               
-            </Grid>
-          </Box>
-        </CardContent>
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained" type="submit" >
-            Add Product
-          </Button>
-        </CardActions>
-      </Card>
-    </form>
+            </Box>
+          </CardContent>
+          <Divider />
+          <CardActions sx={{ justifyContent: 'flex-end' }}>
+            <Button variant="contained" type="submit" onClick={handleSubmit}>
+              Add Product
+            </Button>
+          </CardActions>
+        </Card>
+      </form>
+    </>
   );
 }
 
