@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
+import { useSelector } from "react-redux";
 // @mui
 import {
   formControlClasses,
@@ -74,13 +75,24 @@ export default function ProductsPage() {
 
   const [products, setProducts] = useState([]);
 
-  const [categories, setCategories] = useState([]);
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    setToken(isLogin.token)
+  }, [isLogin])
 
   
 
   useEffect(() => {
+    if(token){
     axios
-      .get(`${PRODUCT_API}?size=${size}&page=${page}&categoryIds=${categories}`)
+      .get(`${PRODUCT_API}?size=${size}&page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then((res) => {
         setProducts(res.data.content);
         setTotalElements(res.data.totalElements);
@@ -88,7 +100,8 @@ export default function ProductsPage() {
       .catch((err) => {
         console.log(err);
       });
-  }, [size, page]);
+    }
+  }, [size, page, token]);
 
   const handleOpenMenu = (event, productId, status) => {
     setOpen(event.currentTarget);
@@ -122,7 +135,11 @@ export default function ProductsPage() {
     console.log(productId);
     if (productId) {
       axios
-        .delete(`${PRODUCT_API}/${productId}`)
+        .delete(`${PRODUCT_API}/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then((res) => {
           toast.current.show({ severity: 'success', summary: 'Success', detail: 'Delete successfully', life: 3000 });
           setConfirmDelete(false);

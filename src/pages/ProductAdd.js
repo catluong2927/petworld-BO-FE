@@ -20,7 +20,13 @@ function ProductAdd() {
   const toast = useRef();
 
   const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
+
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+  const [token, setToken] = useState('');
+
   const [image, setImage] = useState('');
+
   const [image1, setImage1] = useState('');
 
   const [product, setProduct] = useState({
@@ -40,6 +46,11 @@ function ProductAdd() {
     imageDetail: [],
   });
 
+
+  useEffect(() => {
+    setToken(isLogin.token)
+  }, [isLogin])
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prevProduct) => ({
@@ -48,14 +59,22 @@ function ProductAdd() {
     }));
   };
 
+
   const handleImageChange = (imageUrl) => {
     setProduct((prevProduct) => ({
       ...prevProduct,
       image: imageUrl,
     }));
   };
- 
-  console.log('test', product)
+  
+  // useEffect(() => {
+  //   if (image) {
+  //     setProduct((prevProduct) => ({
+  //       ...prevProduct,
+  //       'image': image,
+  //     }));
+  //   }
+  // }, [image]);
 
   useEffect(() => {
     if (image1) {
@@ -66,7 +85,7 @@ function ProductAdd() {
       }));
     }
   }, [image1]);
-
+  
   const getMarkHandler = (e) => {
     const { name, value } = e.target;
     setProduct((prevProduct) => ({
@@ -74,11 +93,15 @@ function ProductAdd() {
       markDtoRequest: { id: value },
     }));
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(`${PRODUCT_API}`, product)
+      .post(`${PRODUCT_API}`, product, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then((res) => {
         toast.current.show({
           severity: 'success',
@@ -92,10 +115,12 @@ function ProductAdd() {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create product Fail', life: 10000 });
         window.location.href = '/dashboard/products/add';
       });
-  };
+    };
 
-  return (
-    <>
+    console.log('test', product)
+    
+    return (
+      <>
       <Toast ref={toast} />
       <form autoComplete="off" noValidate>
         <Card>
@@ -259,8 +284,7 @@ function ProductAdd() {
                     label="Image"
                     name="image"
                     value={image || ''}
-                    onChange={(e) => handleChange(e)}
-                    // disabled={Boolean(image)}
+                    disabled={Boolean(image)}
                     required
                   />
                   <UploadImage setNewAvatar={handleImageChange} />

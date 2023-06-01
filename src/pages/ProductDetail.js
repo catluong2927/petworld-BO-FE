@@ -2,20 +2,51 @@ import { useEffect, useState } from 'react';
 import { Box, Card, CardContent, CardHeader, Divider, TextField, Unstable_Grid2 as Grid } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { sentRequest } from './FetchApi';
+import { useSelector } from "react-redux";
+
 
  function ProductDetail () {
 
-  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}`;
+  const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
+
   const {id} = useParams();
+
   const [product, setProduct] = useState({});
 
+   const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+   const [token, setToken] = useState('');
+
+
+  useEffect(() => {
+    setToken(isLogin.token)
+  }, [isLogin])
+
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${PRODUCT_API}`, {
+  //       headers: {
+  //         Authorization:`Bearer ${token}`
+  //       }
+  //     })
+  //     .then(res => {
+  //       setProduct(res.data)
+  //     })
+  //     .catch(err => {
+  //       throw err
+  //     })
+  // }, [])
   
 
   useEffect(() => {
     if(id){
         axios
-        .get(`${PRODUCT_API}/productsBo/${id}`)
+        .get(`${PRODUCT_API}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then(res => {
             setProduct(res.data)
         })
@@ -23,7 +54,7 @@ import { sentRequest } from './FetchApi';
             throw err
         })
       }
-}, [id]);
+}, [id, token]);
 
 return (
   <form>
@@ -41,7 +72,7 @@ return (
                 value={product.name || ''}
               />
             </Grid>
-            {/* <Grid xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <TextField
                 fullWidth
                 label="Price"
@@ -65,7 +96,7 @@ return (
                 }}
               />
             </Grid>
-            <Grid xs={12} md={4}>
+
               <TextField
                 fullWidth
                 label="ProductCode"
@@ -76,7 +107,10 @@ return (
                   readOnly: true,
                 }}
               />
-            </Grid> */}
+  
+
+
+
           </Grid>
         </Box>
       </CardContent>
