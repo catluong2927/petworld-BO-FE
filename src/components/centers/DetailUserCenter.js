@@ -52,9 +52,16 @@ const DetailUserCenter = (props) => {
         }
     }, [userId]);
 
-    function isEmpty(obj) {
+    function isEmptyValue(obj) {
         const valueArr = Object.values(obj);
         if (valueArr.includes(null)) {
+            return true;
+        }
+        return false;
+    }
+
+    function isEmpty(obj) {
+        if(Object.keys(obj).length === 0) {
             return true;
         }
         return false;
@@ -83,8 +90,6 @@ const DetailUserCenter = (props) => {
                 });
         }
     }
-
-    console.log(center)
 
     return (
         <>
@@ -173,7 +178,7 @@ const DetailUserCenter = (props) => {
                                         >
                                             Delete
                                         </Button>
-                                        <Link to={`/dashboard/centers/owner/edit/${center.id}`}>
+                                        <Link to={`edit/${center.id}`}>
                                             <Button
                                                 variant="contained"
                                                 startIcon={<EditIcon />}
@@ -200,12 +205,12 @@ const DetailUserCenter = (props) => {
                             <Box sx={{ m: -1.5 }}>
                                 <Grid container spacing={3}>
 
-                                    <Grid item xs={12} md={12}>
+                                    <Grid xs={12} md={12}>
                                         <div>{"Hiện tại, bạn chưa có trung tâm. Bạn có muốn tạo trung tâm không?"}</div>
                                     </Grid>
-                                    <Grid item xs={12} md={12}>
+                                    <Grid xs={12} md={12}>
                                         <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                            <Link to={`/dashboard/centers/owner/add`}>
+                                            <Link to={`add`}>
                                                 <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                                                     New Center
                                                 </Button>

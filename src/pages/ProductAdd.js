@@ -67,14 +67,6 @@ function ProductAdd() {
     }));
   };
   
-  // useEffect(() => {
-  //   if (image) {
-  //     setProduct((prevProduct) => ({
-  //       ...prevProduct,
-  //       'image': image,
-  //     }));
-  //   }
-  // }, [image]);
 
   useEffect(() => {
     if (image1) {

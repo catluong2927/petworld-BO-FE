@@ -7,8 +7,8 @@ function OwnerPrivateRoute({ roleName }) {
     const currentUser = useSelector((state) => state.auth.login?.currentUser);
     const role =  currentUser.userDtoResponse.userRoleDtos.map(role => role.roleDtoResponse.name);
     const isOwner = checkOwnerRole(role);
-    if (roleName && !isOwner) return <Navigate to="/" />;
-    return currentUser ? <Outlet /> : <Navigate to="/center" />;
+    if (role && !isOwner) return <Navigate to="/dashboard/app" />;
+    return currentUser ? <Outlet /> : <Navigate to="/owner" />;
 }
 
 export default OwnerPrivateRoute;

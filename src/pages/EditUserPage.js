@@ -21,11 +21,12 @@ const Page = () => {
     const toast = useRef(null);
     const isLogin = useSelector((state) => state.auth.login?.currentUser);
     const [token, setToken] = useState('');
+    
 
     useEffect(() => {
         setToken(isLogin.token)
-      }, [isLogin])
-    
+    }, [isLogin])
+
     useEffect(() => {
         if (userId && token) {
             axios
@@ -42,8 +43,6 @@ const Page = () => {
                 });
         }
     }, [userId, token]);
-
-    console.log(user)
 
     return (
         <>
@@ -69,14 +68,14 @@ const Page = () => {
                                     md={6}
                                     lg={4}
                                 >
-                                    <AccountProfile user={user}/>
+                                    <AccountProfile user={user} />
                                 </Grid>
                                 <Grid
                                     xs={12}
                                     md={6}
                                     lg={8}
                                 >
-                                    <AccountProfileDetails user={user} toast={toast}/>
+                                    <AccountProfileDetails user={user} toast={toast} />
                                 </Grid>
                             </Grid>
                         </div>

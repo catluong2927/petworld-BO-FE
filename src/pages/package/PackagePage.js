@@ -26,6 +26,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
+    Avatar,
 } from '@mui/material';
 
 // components
@@ -42,18 +43,19 @@ import "primereact/resources/primereact.min.css";
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
     { id: 'number', label: '#', alignRight: false },
-    { id: 'name', label: 'Name', alignRight: false },
-    { id: 'address', label: 'Address', alignRight: false },
-    { id: 'email', label: 'Email', alignRight: false },
-    { id: 'phone', label: 'Phone', alignRight: false },
-    { id: '', label: '', alignRight: false },
-    { id: 'isActive', label: 'Status', alignRight: false },
+    { id: 'img', label: 'Image', alignRight: false },
+    { id: 'packageName', label: 'Package name', alignRight: false },
+    { id: 'centerName', label: 'Center name', alignRight: false },
+    { id: 'price', label: 'Price', alignRight: false },
+    { id: 'description', label: 'Description', alignRight: false },
+    { id: 'status', label: 'status', alignRight: false },
+    { id: 'isActive', label: 'isActive', alignRight: false },
     {},
 ];
 // ----------------------------------------------------------------------
-export default function CentersPage() {
+export default function PackagePage() {
 
-    const CENTER_API = `${process.env.REACT_APP_FETCH_API}/centers`;
+    const PACKAGE_API = `${process.env.REACT_APP_FETCH_API}/package-details`;
 
     const [open, setOpen] = useState(null);
 
@@ -63,13 +65,13 @@ export default function CentersPage() {
 
     const [totalElements, setTotalElements] = useState(0);
 
-    const [selectedCenterId, setSelectedCenterId] = useState(null);
+    const [selectedPackageId, setSelectedPackageId] = useState(null);
 
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const [status, setStatus] = useState(true);
 
-    const [centers, setCenters] = useState([]);
+    const [packages, setPackages] = useState([]);
 
     const isLogin = useSelector((state) => state.auth.login?.currentUser);
 
@@ -78,31 +80,20 @@ export default function CentersPage() {
     const toast = useRef(null);
 
     useEffect(() => {
-        setToken(isLogin.token)
-    }, [isLogin])
-
-
-    useEffect(() => {
-        if (token) {
-            axios
-                .get(`${CENTER_API}/all?size=${size}&page=${page}&sort=id,desc`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    setCenters(res.data.content);
-                    setTotalElements(res.data.totalElements);
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }
-    }, [size, page, token])
+        axios
+            .get(`${PACKAGE_API}?size=${size}&page=${page}`)
+            .then(res => {
+                setPackages(res.data.content);
+                setTotalElements(res.data.totalElements);
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [size, page])
 
     const handleOpenMenu = (event, centerId, status) => {
         setOpen(event.currentTarget);
-        setSelectedCenterId(centerId);
+        setSelectedPackageId(centerId);
         setStatus(status);
     };
 
@@ -128,10 +119,11 @@ export default function CentersPage() {
         setConfirmDelete(false);
     };
 
-    function handleDeleteCenter(centerId) {
-        if (centerId) {
+    function handleDeleteCenter(packageId) {
+        console.log(packageId)
+        if (packageId) {
             axios
-                .delete(`${CENTER_API}/${centerId}`)
+                .delete(`${PACKAGE_API}/${packageId}`)
                 .then((res) => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: `Delete ${res.data.name} successfully`, life: 3000 });
                     setConfirmDelete(false);
@@ -143,17 +135,19 @@ export default function CentersPage() {
         }
     }
 
+    console.log(packages)
+
     return (
         <>
             <Toast ref={toast} />
 
             <Helmet>
-                <title> Center | Center Management </title>
+                <title> Package | Package Management </title>
             </Helmet>
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Center Management
+                        Package's Management
                     </Typography>
                 </Stack>
                 <Card>
@@ -162,16 +156,19 @@ export default function CentersPage() {
                             <Table>
                                 <UserListHead key="user-list-head" headLabel={TABLE_HEAD} rowCount={totalElements} />
                                 <TableBody>
-                                    {centers.map((center, index) => {
-                                        const { id, name, address, email, isActive, phone } = center;
+                                    {packages.map((center, index) => {
+                                        const { id, packageName, centerName, price, image, description, isActive, status } = center;
                                         return (
                                             <TableRow hover key={index} tabIndex={-1}>
-                                                <TableCell align="left">{id.toString()}</TableCell>
-                                                <TableCell align="left">{name.toString()}</TableCell>
-                                                <TableCell align="left">{address.toString()}</TableCell>
-                                                <TableCell align="left">{email.toString()}</TableCell>
-                                                <TableCell align="left">{phone.toString()}</TableCell>
-                                                <TableCell align="left">{isActive.toString()}</TableCell>
+                                                <TableCell align="left">{id}</TableCell>
+                                                <TableCell align="left">
+                                                    <Avatar alt={centerName} src={image} />
+                                                </TableCell>
+                                                <TableCell align="left">{packageName}</TableCell>
+                                                <TableCell align="left">{centerName}</TableCell>
+                                                <TableCell align="left">{price}</TableCell>
+                                                <TableCell align="left">{description}</TableCell>
+                                                <TableCell align="left">{status}</TableCell>
                                                 <TableCell align="left">
                                                     <Label color={isActive ? 'success' : 'error'}> {isActive ? 'Active' : 'InActive'} </Label>
                                                 </TableCell>
@@ -185,7 +182,6 @@ export default function CentersPage() {
                                                     </IconButton>
                                                 </TableCell>
                                             </TableRow>
-
                                         );
                                     })}
                                 </TableBody>
@@ -221,7 +217,7 @@ export default function CentersPage() {
                     },
                 }}
             >
-                <Link to={`info/${selectedCenterId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
+                <Link to={`info/${selectedPackageId}`} style={{ textDecoration: 'none', color: '#2CD3E1' }}>
                     <MenuItem>
                         <Iconify icon={'eva:info-fill'} sx={{ mr: 2 }} />
                         Detail
@@ -244,7 +240,7 @@ export default function CentersPage() {
                     <DialogActions>
                         <Button onClick={handleCloseDelete}>Cancel</Button>
                         <Button
-                            onClick={() => handleDeleteCenter(selectedCenterId)}
+                            onClick={() => handleDeleteCenter(selectedPackageId)}
                             autoFocus
                         >
                             Delete
