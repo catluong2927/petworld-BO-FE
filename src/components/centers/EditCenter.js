@@ -62,7 +62,7 @@ function EditCenter() {
             .put(`${CENTER_API}/${centerId}`, editCenter)
             .then(res => {
                 toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
-                window.location.href = "/dashboard/centers/owner";
+                window.location.href = "/dashboard/owner/centers";
             })
             .catch(err => {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create Fail', life: 3000 });

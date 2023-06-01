@@ -1,48 +1,69 @@
 // component
+import { useSelector } from "react-redux";
 import SvgColor from '../../../components/svg-color';
+import NavSection from '../../../components/nav-section';
 
-// ----------------------------------------------------------------------
+const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
-const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{width: 1, height: 1}}/>;
-
-const navConfig = [
+const navConfig = (role) => [
     {
         title: 'dashboard',
-        path: '/dashboard/app',
+        path: `/dashboard/app`,
         icon: icon('ic_analytics'),
     },
     {
         title: 'user',
-        path: '/dashboard/user',
+        path: `/dashboard/${role}/user`,
         icon: icon('ic_user'),
     },
     {
         title: 'product',
-        path: '/dashboard/products',
+        path: `/dashboard/${role}/products`,
         icon: icon('ic_cart'),
     },
     {
         title: 'center',
-        path: '/dashboard/centers',
-        icon: icon('ic_center')
-    }
-    ,
-    {
-        title: 'service',
-        path: '/dashboard/package',
-        icon: icon('ic_package')
-    }
-    ,
-    {
-        title: 'login',
-        path: '/login',
-        icon: icon('ic_lock'),
+        path: `/dashboard/${role}/centers`,
+        icon: icon('ic_center'),
     },
     {
-        title: 'Not found',
-        path: '/404',
-        icon: icon('ic_disabled'),
+        title: 'package',
+        path: `/dashboard/${role}/packages`,
+        icon: icon('ic_package'),
     },
 ];
 
-export default navConfig;
+function NewNavConfig() {
+    const isLogin = useSelector((state) => state.auth.login?.currentUser);
+    const roles = isLogin.userDtoResponse.userRoleDtos.map(role => role.roleDtoResponse.name);
+
+    const prefix = "ROLE_";
+    let currentRoles = [];
+    if (roles.length > 0) {
+        for(let i = 0; i < roles.length; i+=1){
+            const role = roles[i].substring(prefix.length).toLocaleLowerCase();
+            if (role === 'admin') {
+                console.log('1', navConfig(role))
+                currentRoles = [...navConfig(role)];
+                break;
+            }
+            if (role === 'owner') {
+                console.log('2', navConfig(role))
+                currentRoles = [...navConfig(role)];
+                break;
+            }
+            if (role === 'seller') {
+                console.log('3', navConfig(role))
+                currentRoles = [...navConfig(role)];
+                break;
+            }
+        };
+    }
+
+    return (
+        <NavSection data={currentRoles} />
+    )
+}
+
+
+export default NewNavConfig;

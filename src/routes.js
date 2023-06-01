@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 import DashboardAppPage from './pages/DashboardAppPage';
-import BlogPage from './pages/BlogPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 
@@ -17,20 +16,23 @@ import ProductAdd from './pages/ProductAdd';
 import CenterPage from "./pages/center/CentersPage";
 import OwnerCenterPage from "./pages/center/OwnerCenterPage";
 import AddCenter from "./components/centers/AddCenter";
+import EditCenter from "./components/centers/EditCenter";
+import InfoCenter from "./components/centers/InfoCenter";
+
+// Package
+import PackagePage from './pages/package/PackagePage';
+import SellerPackageDetailPage from "./pages/package/SellerPackageDetailPage";
+import InfoPackage from "./components/package/InfoPackage";
 
 // User
 import UserPage from './pages/UserPage';
 import EditUserPage from './pages/EditUserPage'
 import InfoUserPage from './pages/InfoUserPage'
-import EditCenter from "./components/centers/EditCenter";
-import InfoCenter from "./components/centers/InfoCenter";
 
 // Role
 import AdminPrivateRoute from "./hoc/AdminPrivateRoute";
 import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
-
-
-// ----------------------------------------------------------------------
+import SellerPrivateRoute from './hoc/SellerPrivateRoute';
 
 export default function Router() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
@@ -46,21 +48,52 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
-        { path: 'user/edit/:userId', element: <EditUserPage /> },
-        { path: 'user/info/:userId', element: <InfoUserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'products/add', element: <ProductAdd /> },
-        { path: 'centers', element: <AdminPrivateRoute roleName="ROLE_ADMIN" />, children: [
-          { path: '', element: <CenterPage /> },
-          { path: 'info/:centerId', element: <InfoCenter /> },
-        ]},
-        { path: 'centers/owner', element: <OwnerPrivateRoute roleName="ROLE_OWNER" />, children: [
-          { path: '', element: <OwnerCenterPage /> },
-          { path: 'add', element: <AddCenter /> },
-          { path: 'edit/:centerId', element: <EditCenter /> },
-        ]},
-        { path: 'blog', element: <BlogPage /> },
+
+        // Admin
+        {
+          path: 'admin',
+          element: <AdminPrivateRoute roleName="ROLE_ADMIN" />,
+          children: [
+            {
+              path: 'user',
+              children: [
+                { path: '', element: <UserPage /> },
+                { path: 'edit/:userId', element: <EditUserPage /> },
+                { path: 'info/:userId', element: <InfoUserPage /> },
+              ],
+            },
+            {
+              path: 'centers',
+              children: [
+                { path: '', element: <CenterPage /> },
+                { path: 'info/:centerId', element: <InfoCenter /> },
+              ],
+            },
+            { path: 'products', element: <ProductsPage /> },
+            { path: 'packages', children: [
+              { path: '', element: <PackagePage /> },
+              { path: 'info/:packageId', element: <InfoPackage /> },
+            ],},
+          ],
+        },
+
+        // Owner
+        {
+          path: 'owner',
+          element: <OwnerPrivateRoute roleName="ROLE_OWNER" />,
+          children: [
+            {
+              path: 'centers',
+              children: [
+                { path: '', element: <OwnerCenterPage /> },
+                { path: 'add', element: <AddCenter /> },
+                { path: 'edit/:centerId', element: <EditCenter /> },
+              ],
+            },
+            { path: 'products/add', element: <ProductAdd /> },
+          ],
+        },
+
       ],
     },
     {
@@ -68,6 +101,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: '404', element: <Page404 /> },
+
         { path: '*', element: <Navigate to="/404" /> },
       ],
     },
