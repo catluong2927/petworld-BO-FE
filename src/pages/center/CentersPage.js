@@ -46,7 +46,6 @@ const TABLE_HEAD = [
     { id: 'address', label: 'Address', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
     { id: 'phone', label: 'Phone', alignRight: false },
-    { id: '', label: '', alignRight: false },
     { id: 'isActive', label: 'Status', alignRight: false },
     {},
 ];
@@ -171,7 +170,6 @@ export default function CentersPage() {
                                                 <TableCell align="left">{address.toString()}</TableCell>
                                                 <TableCell align="left">{email.toString()}</TableCell>
                                                 <TableCell align="left">{phone.toString()}</TableCell>
-                                                <TableCell align="left">{isActive.toString()}</TableCell>
                                                 <TableCell align="left">
                                                     <Label color={isActive ? 'success' : 'error'}> {isActive ? 'Active' : 'InActive'} </Label>
                                                 </TableCell>

@@ -34,7 +34,7 @@ import InfoUserPage from './pages/InfoUserPage'
 // Role
 import AdminPrivateRoute from "./hoc/AdminPrivateRoute";
 import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
-import SellerPrivateRoute from './hoc/SellerPrivateRoute';
+import CustomerPrivateRoute from './hoc/CustomerPrivateRoute';
 
 export default function Router() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
@@ -46,7 +46,7 @@ export default function Router() {
     },
     {
       path: '/dashboard',
-      element: isLogin ? <DashboardLayout /> : <Navigate to='/login' />,
+      element: <CustomerPrivateRoute/>,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
 

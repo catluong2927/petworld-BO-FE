@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from "react-redux";
+
 // @mui
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
-// mock
-import account from '../../../_mock/account';
+
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 // components
@@ -36,6 +37,10 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
 
+  const isLogin = useSelector((state) => state.auth.login?.currentUser);
+
+  const [account, setAccount] = useState({});
+
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {
@@ -44,6 +49,12 @@ export default function Nav({ openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  useEffect(() => {
+    if (isLogin) {
+      setAccount(isLogin.userDtoResponse);
+    }
+  }, [isLogin])
 
   const renderContent = (
     <Scrollbar
@@ -59,23 +70,28 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={account.avatar} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {account.userName}
               </Typography>
 
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
-              </Typography>
+              {
+                account.userRoleDtos?.map((element, index) =>
+                  (<Typography key={index} variant="body2" sx={{ color: 'text.secondary' }}>
+                    {element.roleDtoResponse?.desc}
+                  </Typography>)
+                )
+              }
+
             </Box>
           </StyledAccount>
         </Link>
       </Box>
 
-      <NewNavConfig/>
-      
+      <NewNavConfig />
+
       <Box sx={{ flexGrow: 1 }} />
 
     </Scrollbar>
