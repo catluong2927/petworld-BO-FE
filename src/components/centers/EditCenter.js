@@ -34,7 +34,13 @@ function EditCenter() {
 
     const [editCenter, setEditCenter] = useState({});
 
+    const [errors, setErrors] = useState({});
+
     const toast = useRef(null);
+
+    const REGEX = {
+        email: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
+    };
 
     useEffect(() => {
         if (centerId) {
@@ -57,20 +63,59 @@ function EditCenter() {
         })
     }
 
-    function handleSubmit(e) {
-        axios
-            .put(`${CENTER_API}/${centerId}`, editCenter)
-            .then(res => {
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
-                window.location.href = "/dashboard/owner/centers";
-            })
-            .catch(err => {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create Fail', life: 3000 });
-                throw err;
-            });
-    }
+    const validateForm = () => {
+        let formIsValid = true;
+        const newErrors = {};
 
-    console.log(editCenter)
+        // Validate Fullname
+        if (!editCenter.name) {
+            newErrors.name = 'Please specify the Name.';
+            formIsValid = false;
+        }
+
+        // Validate Phone Number
+        if (!editCenter.phone) {
+            newErrors.phone = 'Please enter your central phone number.';
+            formIsValid = false;
+        } else if (editCenter.phone.length > 10) {
+            newErrors.phone = 'Phone number should be less than or equal to 10 digits.';
+            formIsValid = false;
+        }
+
+        // Validate email
+        if (!editCenter.email) {
+            newErrors.email = 'Please enter your central email.';
+            formIsValid = false;
+        } else if (!REGEX.email.test(editCenter.email)) {
+            newErrors.email = 'Invalid email address.';
+            formIsValid = false;
+        }
+
+        // Validate Address
+        if (!editCenter.address) {
+            newErrors.address = 'Please enter your central address.';
+            formIsValid = false;
+        }
+
+        setErrors(newErrors);
+        return formIsValid;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (validateForm()) {
+            axios
+                .put(`${CENTER_API}/${centerId}`, editCenter)
+                .then((res) => {
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
+                    window.location.href = '/dashboard/owner/centers';
+                })
+                .catch((err) => {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create Fail', life: 3000 });
+                    throw err;
+                });
+        }
+    };
 
     return (
         <>
@@ -112,7 +157,8 @@ function EditCenter() {
                                 >
                                     <TextField
                                         fullWidth
-                                        helperText="Please specify the Name"
+                                        error={!!errors.name}
+                                        helperText={errors.name || ""}
                                         label="Name"
                                         name="name"
                                         onChange={(e) => handleChange(e)}
@@ -126,6 +172,8 @@ function EditCenter() {
                                 >
                                     <TextField
                                         fullWidth
+                                        error={!!errors.email}
+                                        helperText={errors.email}
                                         label="Email Address"
                                         name="email"
                                         onChange={(e) => handleChange(e)}
@@ -139,6 +187,8 @@ function EditCenter() {
                                 >
                                     <TextField
                                         fullWidth
+                                        error={!!errors.phone}
+                                        helperText={errors.phone}
                                         label="Phone Number"
                                         name="phone"
                                         onChange={(e) => handleChange(e)}
@@ -153,6 +203,8 @@ function EditCenter() {
                                 >
                                     <TextField
                                         fullWidth
+                                        error={!!errors.address}
+                                        helperText={errors.address}
                                         label="Address"
                                         name="address"
                                         onChange={(e) => handleChange(e)}
@@ -188,12 +240,12 @@ function EditCenter() {
                                             id="demo-simple-select"
                                             label="Active"
                                             name="isActive"
-                                            value={editCenter.isActive || ''}
+                                            value={editCenter.isActive|| ''}
                                             onChange={(e) => handleChange(e)}
                                             required
                                         >
                                             <MenuItem value={'true'}>Active</MenuItem>
-                                            <MenuItem value={'false'}>Inactive</MenuItem>
+                                            <MenuItem value={'false'}>InActive</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
