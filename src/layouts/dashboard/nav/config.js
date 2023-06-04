@@ -85,17 +85,14 @@ function NewNavConfig() {
             const role = roles[i].substring(prefix.length).toLocaleLowerCase();
             console.log(role)
             if (role === 'admin') {
-                console.log('1', navConfigAdmin())
                 currentRoles = [...navConfigAdmin()];
                 break;
             }
             if (role === 'owner') {
-                console.log('2', navConfigOwner())
                 currentRoles = [...navConfigOwner()];
                 break;
             }
             if (role === 'seller') {
-                console.log('3', navConfigSeller())
                 currentRoles = [...navConfigSeller()];
                 break;
             }
