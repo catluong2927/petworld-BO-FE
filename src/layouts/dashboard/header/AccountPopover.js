@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
@@ -6,7 +6,6 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover 
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {logout} from "../../../redux/apiRequest";
-import account from '../../../_mock/account';
 
 
 const MENU_OPTIONS = [
@@ -31,14 +30,24 @@ export default function AccountPopover() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
+  const [account, setAccount] = useState({});
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleClose = () => {
-      logout(dispatch,navigate)
+    logout(dispatch,navigate)
   };
+
+  useEffect(() => {
+    if(isLogin) {
+      setAccount(isLogin.userDtoResponse);
+    }
+  }, [isLogin])
+
+  console.log(isLogin)
+  console.log(1,account)
 
   return (
     <>
@@ -59,7 +68,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={account.avatar} alt="photoURL" />
       </IconButton>
 
       <Popover
@@ -83,7 +92,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {account.userName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {account.email}

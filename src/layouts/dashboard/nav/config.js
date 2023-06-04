@@ -5,7 +5,7 @@ import NavSection from '../../../components/nav-section';
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
-const navConfig = (role) => [
+const navConfigAdmin = () => [
     {
         title: 'dashboard',
         path: `/dashboard/app`,
@@ -13,22 +13,63 @@ const navConfig = (role) => [
     },
     {
         title: 'user',
-        path: `/dashboard/${role}/user`,
+        path: `/dashboard/admin/user`,
         icon: icon('ic_user'),
     },
     {
         title: 'product',
-        path: `/dashboard/${role}/products`,
+        path: `/dashboard/admin/products`,
         icon: icon('ic_cart'),
     },
     {
         title: 'center',
-        path: `/dashboard/${role}/centers`,
+        path: `/dashboard/admin/centers`,
         icon: icon('ic_center'),
     },
     {
         title: 'package',
-        path: `/dashboard/${role}/packages`,
+        path: `/dashboard/admin/packages`,
+        icon: icon('ic_package'),
+    },
+];
+
+const navConfigOwner = () => [
+    {
+        title: 'dashboard',
+        path: `/dashboard/app`,
+        icon: icon('ic_analytics'),
+    },
+    {
+        title: 'center',
+        path: `/dashboard/owner/centers`,
+        icon: icon('ic_center'),
+    },
+    {
+        title: 'package',
+        path: `/dashboard/owner/packages`,
+        icon: icon('ic_package'),
+    },
+];
+
+const navConfigSeller = () => [
+    {
+        title: 'dashboard',
+        path: `/dashboard/app`,
+        icon: icon('ic_analytics'),
+    },
+    {
+        title: 'product',
+        path: `/dashboard/seller/products`,
+        icon: icon('ic_cart'),
+    },
+    {
+        title: 'center',
+        path: `/dashboard/seller/centers`,
+        icon: icon('ic_center'),
+    },
+    {
+        title: 'package',
+        path: `/dashboard/seller/packages`,
         icon: icon('ic_package'),
     },
 ];
@@ -42,19 +83,20 @@ function NewNavConfig() {
     if (roles.length > 0) {
         for(let i = 0; i < roles.length; i+=1){
             const role = roles[i].substring(prefix.length).toLocaleLowerCase();
+            console.log(role)
             if (role === 'admin') {
-                console.log('1', navConfig(role))
-                currentRoles = [...navConfig(role)];
+                console.log('1', navConfigAdmin())
+                currentRoles = [...navConfigAdmin()];
                 break;
             }
             if (role === 'owner') {
-                console.log('2', navConfig(role))
-                currentRoles = [...navConfig(role)];
+                console.log('2', navConfigOwner())
+                currentRoles = [...navConfigOwner()];
                 break;
             }
             if (role === 'seller') {
-                console.log('3', navConfig(role))
-                currentRoles = [...navConfig(role)];
+                console.log('3', navConfigSeller())
+                currentRoles = [...navConfigSeller()];
                 break;
             }
         };

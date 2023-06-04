@@ -23,7 +23,7 @@ import InfoCenter from "./components/centers/InfoCenter";
 
 // Package
 import PackagePage from './pages/package/PackagePage';
-import SellerPackageDetailPage from "./pages/package/SellerPackageDetailPage";
+import PackageDetailPage from "./pages/package/PackageDetailPage";
 import InfoPackage from "./components/package/InfoPackage";
 
 // User
@@ -34,7 +34,7 @@ import InfoUserPage from './pages/InfoUserPage'
 // Role
 import AdminPrivateRoute from "./hoc/AdminPrivateRoute";
 import OwnerPrivateRoute from './hoc/OwnerPrivateRoute';
-import SellerPrivateRoute from './hoc/SellerPrivateRoute';
+import CustomerPrivateRoute from './hoc/CustomerPrivateRoute';
 
 export default function Router() {
   const isLogin = useSelector((state) => state.auth.login?.currentUser);
@@ -46,10 +46,10 @@ export default function Router() {
     },
     {
       path: '/dashboard',
-      element: isLogin ? <DashboardLayout /> : <Navigate to='/login' />,
+      element: <CustomerPrivateRoute/>,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
-        
+
         { path: 'app', element: <DashboardAppPage /> },
 
         // Admin
@@ -72,19 +72,21 @@ export default function Router() {
                 { path: 'info/:centerId', element: <InfoCenter /> },
               ],
             },
-            { 
-              path: 'products', 
-              children:  [
+            {
+              path: 'products',
+              children: [
                 { path: '', element: <ProductsPage /> },
                 { path: 'add', element: <ProductAdd /> },
-                { path: 'edit/:id',element: <ProductEdit />},
+                { path: 'edit/:id', element: <ProductEdit /> },
                 { path: 'detail/:id', element: <ProductDetail /> },
               ]
             },
-            { path: 'packages', children: [
-              { path: '', element: <PackagePage /> },
-              { path: 'info/:packageId', element: <InfoPackage /> },
-            ],},
+            {
+              path: 'packages', children: [
+                { path: '', element: <PackagePage /> },
+                { path: 'info/:packageId', element: <InfoPackage /> },
+              ],
+            },
           ],
         },
 
@@ -99,6 +101,13 @@ export default function Router() {
                 { path: '', element: <OwnerCenterPage /> },
                 { path: 'add', element: <AddCenter /> },
                 { path: 'edit/:centerId', element: <EditCenter /> },
+              ],
+            },
+            { path: 'products/add', element: <ProductAdd /> },
+            {
+              path: 'packages', children: [
+                { path: '', element: <PackageDetailPage /> },
+                { path: 'info/:packageId', element: <InfoPackage /> },
               ],
             },
           ],

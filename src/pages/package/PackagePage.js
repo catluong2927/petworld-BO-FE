@@ -168,7 +168,9 @@ export default function PackagePage() {
                                                 <TableCell align="left">{centerName}</TableCell>
                                                 <TableCell align="left">{price}</TableCell>
                                                 <TableCell align="left">{description}</TableCell>
-                                                <TableCell align="left">{status}</TableCell>
+                                                <TableCell align="left">
+                                                    <Label color={status ? 'success' : 'error'}> {status ? 'Stocking' : 'Out of stock'} </Label>
+                                                </TableCell>
                                                 <TableCell align="left">
                                                     <Label color={isActive ? 'success' : 'error'}> {isActive ? 'Active' : 'InActive'} </Label>
                                                 </TableCell>
