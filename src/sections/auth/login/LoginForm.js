@@ -28,17 +28,21 @@ export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClick = async () => {
+        const data = {};
+        data.account = form.account;
+        data.password = form.password;
+
         console.log(2)
-        await loginUser(form, dispatch, navigate, toast)
+        await loginUser(data, dispatch, navigate, toast)
     };
 
     return (
         <>
             <Toast ref={toast} />
             <Stack spacing={3}>
-                <TextField name="email"
-                           label="Email address"
-                           value={form.email || ""}
+                <TextField name="account"
+                           label="your account"
+                           value={form.account || ""}
                            onChange={(e) => handleChangeLogin(e)}
                 />
 
