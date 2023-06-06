@@ -45,7 +45,7 @@ function ProductAdd() {
     vitamins: '',
     animal: '',
     sale: '',
-    markDtoRequest: { id: '' },
+    mark: { id: '' },
     image: '',
     imageDetail: [],
   });
@@ -83,7 +83,7 @@ function ProductAdd() {
     const { name, value } = e.target;
     setProduct((prevProduct) => ({
       ...prevProduct,
-      markDtoRequest: { id: value },
+      mark: { id: value },
     }));
   };
   console.log(product);
@@ -251,7 +251,7 @@ function ProductAdd() {
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       label="Mark"
-                      value={product.markDtoRequest.id || ''}
+                      value={product.mark.id || ''}
                       onChange={(e) => getMarkHandler(e)}
                     >
                       <MenuItem value={1}>None</MenuItem>

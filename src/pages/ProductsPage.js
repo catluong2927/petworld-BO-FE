@@ -4,18 +4,17 @@ import { Link, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
 import { useSelector } from "react-redux";
+import { styled } from '@mui/material/styles';
+
+
 // @mui
 import {
-  formControlClasses,
-  lable,
   Card,
   Table,
   Stack,
-  Paper,
   Avatar,
   Button,
   Popover,
-  Checkbox,
   TableRow,
   MenuItem,
   TableBody,
@@ -30,16 +29,19 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Input, Slide, InputAdornment, ClickAwayListener
 } from '@mui/material';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHead} from '../sections/@dashboard/user';
 // mock
 
 // ----------------------------------------------------------------------
+
+
 
 const TABLE_HEAD = [
   { id: 'number', label: '#', alignRight: false },
@@ -53,6 +55,7 @@ const TABLE_HEAD = [
 ];
 
 // ----------------------------------------------------------------------
+
 
 export default function ProductsPage() {
   const PRODUCT_API = `${process.env.REACT_APP_FETCH_API}/productsBo`;
@@ -83,7 +86,6 @@ export default function ProductsPage() {
     setToken(isLogin.token)
   }, [isLogin])
 
-  
 
   useEffect(() => {
     if(token){

@@ -9,6 +9,9 @@ import {
   Chip,
   Avatar,
   TextField,
+  FormControl,
+  FormControlLabel,
+  Switch,
   Unstable_Grid2 as Grid,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
@@ -29,8 +32,7 @@ function ProductDetail() {
   useEffect(() => {
     setToken(isLogin.token);
   }, [isLogin]);
-  console.log(product)
-
+  console.log(product);
 
   useEffect(() => {
     if (token) {
@@ -54,8 +56,8 @@ function ProductDetail() {
       <Card>
         <CardHeader title="Product's Detail" style={{ paddingBottom: '20px', fontSize: '100px' }} />
         <CardContent sx={{ pt: 0 }}>
+
           <Box sx={{ m: -1.5 }}>
-            
             <Grid container spacing={3}>
               <Grid xs={12} md={12}>
                 <Avatar
@@ -202,17 +204,17 @@ function ProductDetail() {
               </Grid>
 
               <Grid xs={12} md={6}>
-                { product.mark &&
-                <TextField
-                  fullWidth
-                  label="Mark"
-                  name="mark"
-                  value={product.mark.tag || ''}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                }
+                {product.mark && (
+                  <TextField
+                    fullWidth
+                    label="Mark"
+                    name="mark"
+                    value={product.mark.tag || ''}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                )}
               </Grid>
 
               <Grid xs={12} md={6}>
