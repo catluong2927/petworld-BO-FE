@@ -8,9 +8,6 @@ function CustomerPrivateRoute() {
     const currentUser = useSelector((state) => state.auth.login?.currentUser);
     const role =  currentUser.userDtoResponse.userRoleDtos.map(role => role.roleDtoResponse.name);
     const isCustomer = checkCustomerRole(role);
-    // if (role && !isOwner) return <Navigate to="/dashboard/app" />;
-    // return currentUser ? <Outlet /> : <Navigate to="/owner" />;
-
     if(currentUser && role && !isCustomer) {
         return <DashboardLayout />;
     }

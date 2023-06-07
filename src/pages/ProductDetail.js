@@ -96,17 +96,6 @@ function ProductDetail() {
                 />
               </Grid>
 
-              <Grid xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Description"
-                  name="description"
-                  value={product.description || ''}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
 
               <Grid xs={12} md={6}>
                 <TextField
@@ -226,6 +215,20 @@ function ProductDetail() {
                     value={product.categoryDtoResponse.name || ''}
                   />
                 )}
+              </Grid>
+              
+              <Grid xs={12} md={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  label="Description"
+                  name="description"
+                  value={product.description || ''}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
               </Grid>
 
               <Grid xs={12} md={12}>

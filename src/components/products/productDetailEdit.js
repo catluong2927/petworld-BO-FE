@@ -17,6 +17,10 @@ import {
   FormControlLabel,
   Unstable_Grid2 as Grid,
   Avatar,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 
 import UploadImage from '../upload/UploadImage';
@@ -73,7 +77,7 @@ function ProductDetailEdit() {
     const { value } = e.target;
     setProduct((prevProduct) => ({
       ...prevProduct,
-      markDtoRequest: { id: value },
+      mark: { id: value },
     }));
   };
 
@@ -271,29 +275,17 @@ function ProductDetailEdit() {
                   />
                 </Grid>
 
-                <Grid xs={12} md={4}>
+                <Grid xs={12} md={6}>
                   <TextField
                     fullWidth
                     label="Sale"
                     name="sale"
-                    value={product.sale || 0}
+                    value={product.sale || ''}
                     onChange={(e) => handleChange(e)}
                   />
                 </Grid>
 
-                <Grid xs={12} md={4}>
-                  {product.mark && (
-                    <TextField
-                      fullWidth
-                      label="Mark"
-                      name="mark"
-                      value={product.mark.tag || ''}
-                      onChange={(e) => getMarkHandler(e)}
-                    />
-                  )}
-                </Grid>
-
-                <Grid xs={12} md={4}>
+                <Grid xs={12} md={6}>
                   {product.categoryDtoResponse && (
                     <TextField
                       fullWidth

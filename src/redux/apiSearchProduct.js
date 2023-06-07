@@ -13,7 +13,7 @@ export const searchByName = async(product, dispatch, Navigate, toast) => {
     const PRODUCT_API = process.env.REACT_APP_FETCH_API;
     dispatch(searchProduct());
     try{
-        const res = await axios.get(`${PRODUCT_API}/productBo/search`)
+        const res = await axios.get(`${PRODUCT_API}/productBo/search?name={name}`)
     } catch{
         console.log('hello')
     }

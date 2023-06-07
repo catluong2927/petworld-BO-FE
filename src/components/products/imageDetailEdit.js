@@ -114,7 +114,7 @@ function ImageDetailEdit() {
                             mr: 'auto',
                           }}
                         />
-                        <span style={codeStyle}>{`Hình ${index + 1}`}</span>
+                        <span style={codeStyle}>{`ImageDetail ${index + 1}`}</span>
                         <UploadImage setNewAvatar={(imageUrl) => handleImageUpload(imageUrl, image.id, index)} />
                       </Grid>
                     ))}
