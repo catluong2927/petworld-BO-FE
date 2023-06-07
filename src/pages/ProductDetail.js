@@ -1,5 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Box, Card, CardContent, CardHeader, Divider,CardActions, Chip , Avatar, TextField, Unstable_Grid2 as Grid } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  CardActions,
+  Chip,
+  Avatar,
+  TextField,
+  FormControl,
+  FormControlLabel,
+  Switch,
+  Unstable_Grid2 as Grid,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -18,8 +32,6 @@ function ProductDetail() {
   useEffect(() => {
     setToken(isLogin.token);
   }, [isLogin]);
-
-  console.log('hihihihhhi');
   console.log(product);
 
   useEffect(() => {
@@ -44,6 +56,7 @@ function ProductDetail() {
       <Card>
         <CardHeader title="Product's Detail" style={{ paddingBottom: '20px', fontSize: '100px' }} />
         <CardContent sx={{ pt: 0 }}>
+
           <Box sx={{ m: -1.5 }}>
             <Grid container spacing={3}>
               <Grid xs={12} md={12}>
@@ -83,17 +96,6 @@ function ProductDetail() {
                 />
               </Grid>
 
-              <Grid xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Description"
-                  name="description"
-                  value={product.description || ''}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
 
               <Grid xs={12} md={6}>
                 <TextField
@@ -191,42 +193,70 @@ function ProductDetail() {
               </Grid>
 
               <Grid xs={12} md={6}>
+                {product.mark && (
+                  <TextField
+                    fullWidth
+                    label="Mark"
+                    name="mark"
+                    value={product.mark.tag || ''}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                )}
+              </Grid>
+
+              <Grid xs={12} md={6}>
+                {product.categoryDtoResponse && (
+                  <TextField
+                    fullWidth
+                    label="Category"
+                    name="categoryDtoResponse.name"
+                    value={product.categoryDtoResponse.name || ''}
+                  />
+                )}
+              </Grid>
+              
+              <Grid xs={12} md={12}>
                 <TextField
                   fullWidth
-                  label="Mark"
-                  name="mark.id"
-                  value={id || ''}
+                  multiline
+                  minRows={3}
+                  label="Description"
+                  name="description"
+                  value={product.description || ''}
                   InputProps={{
                     readOnly: true,
                   }}
                 />
               </Grid>
-              
+
               <Grid xs={12} md={12}>
-              <div className="image-grid-container">
-                <div className="image-grid">
-                  {product.imageDetailList && product.imageDetailList.map((image, index) => (
-                    <div className="image-container" key={`image${index}`}>
-                      <img src={image.url} alt={index} />
-                    </div>
-                  ))}
+                <div className="image-grid-container">
+                  <div className="image-grid">
+                    {product.imageDetailList &&
+                      product.imageDetailList.map((image, index) => (
+                        <div className="image-container" key={`image${index}`}>
+                          <img src={image.url} alt={index} />
+                        </div>
+                      ))}
+                  </div>
                 </div>
-              </div>
               </Grid>
 
-
               <Grid xs={12} md={12}>
-                          <CardActions sx={{ justifyContent: 'flex-start' }}>
-                              <Chip
-                                  label={product.status ? 'Active' : 'InActive'}
-                                  style={product.status ?
-                                      { backgroundColor: '#C7F2A4', color: '#5F8D4E', fontSize: '15px', fontWeight: 'bold' } :
-                                      { backgroundColor: '#FFA8A8', color: '#DF2E38', fontSize: '15px', fontWeight: 'bold' }
-                                  }
-                                  variant="outlined"
-                              />
-                          </CardActions>
-                      </Grid>
+                <CardActions sx={{ justifyContent: 'flex-start' }}>
+                  <Chip
+                    label={product.status ? 'Active' : 'InActive'}
+                    style={
+                      product.status
+                        ? { backgroundColor: '#C7F2A4', color: '#5F8D4E', fontSize: '15px', fontWeight: 'bold' }
+                        : { backgroundColor: '#FFA8A8', color: '#DF2E38', fontSize: '15px', fontWeight: 'bold' }
+                    }
+                    variant="outlined"
+                  />
+                </CardActions>
+              </Grid>
             </Grid>
           </Box>
         </CardContent>

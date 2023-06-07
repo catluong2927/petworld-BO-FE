@@ -13,6 +13,7 @@ import {
 } from 'redux-persist';
 import authReducer from "./authSlice";
 
+
 const persistConfig = {
     key: 'root',
     version: 1,
