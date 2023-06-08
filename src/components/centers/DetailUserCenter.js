@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
-
+import { useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -39,10 +39,22 @@ const DetailUserCenter = (props) => {
 
     const toast = useRef(null);
 
+    const [token , setToken] = useState('');
+
+    const currentUser = useSelector((state) => state.auth.login?.currentUser);
+
     useEffect(() => {
-        if (userId) {
+        setToken(currentUser.token)
+    }, [currentUser])
+
+    useEffect(() => {
+        if (userId && token) {
             axios
-                .get(`${CENTER_API}/user/${userId}`)
+                .get(`${CENTER_API}/user/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then(res => {
                     setCenter(res.data);
                 })
@@ -50,7 +62,7 @@ const DetailUserCenter = (props) => {
                     throw err;
                 });
         }
-    }, [userId]);
+    }, [userId, token]);
 
     function isEmptyValue(obj) {
         const valueArr = Object.values(obj);
@@ -76,9 +88,13 @@ const DetailUserCenter = (props) => {
     };
 
     function handleDeleteCenter(centerId) {
-        if (centerId) {
+        if (centerId && token) {
             axios
-                .delete(`${CENTER_API}/${centerId}`)
+                .delete(`${CENTER_API}/${centerId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((res) => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: `Delete ${center.name} successfully`, life: 3000 });
                     setConfirmDelete(false);

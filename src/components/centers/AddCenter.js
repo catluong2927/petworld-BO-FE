@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
@@ -31,9 +31,15 @@ function AddCenter() {
 
     const toast = useRef(null);
 
+    const [token, setToken] = useState('');
+
     const REGEX = {
         email: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
     };
+
+    useEffect(() => {
+        setToken(currentUser.token)
+    }, [currentUser])
 
     function handleChange(e) {
         setNewCenter({
@@ -83,9 +89,13 @@ function AddCenter() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        if (validateForm()) {
+        if (validateForm() && token) {
             axios
-                .post(`${CENTER_API}`, newCenter)
+                .post(`${CENTER_API}`, newCenter, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then(res => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
                     window.location.href = "/dashboard/owner/centers";

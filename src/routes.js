@@ -7,6 +7,7 @@ import SimpleLayout from './layouts/simple';
 import DashboardAppPage from './pages/DashboardAppPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
+import Profile from './pages/Profile';
 
 // Product
 import ProductsPage from './pages/ProductsPage';
@@ -49,9 +50,8 @@ export default function Router() {
       element: <CustomerPrivateRoute/>,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
-
         { path: 'app', element: <DashboardAppPage /> },
-
+        { path: 'profile', element: <Profile/>},
         // Admin
         {
           path: 'admin',
@@ -112,9 +112,9 @@ export default function Router() {
             },
           ],
         },
-
       ],
     },
+
     {
       element: <SimpleLayout />,
       children: [
