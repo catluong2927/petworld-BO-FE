@@ -4,7 +4,7 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {logout} from "../../../redux/apiRequest";
 
 
@@ -12,14 +12,17 @@ const MENU_OPTIONS = [
   {
     label: 'Home',
     icon: 'eva:home-fill',
+    path: '/dashboard',
   },
   {
     label: 'Profile',
     icon: 'eva:person-fill',
+    path: '/dashboard/profile',
   },
   {
     label: 'Settings',
     icon: 'eva:settings-2-fill',
+    path: '/dashboard/settings',
   },
 ];
 
@@ -103,7 +106,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={option.label} component={Link} to={option.path}>
               {option.label}
             </MenuItem>
           ))}

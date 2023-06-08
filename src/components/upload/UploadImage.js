@@ -16,7 +16,6 @@ const UploadImage = (props) => {
   };
 
   const handleUploadButtonClick = (e) => {
-    console.log('2');
     e.preventDefault();
     if (fileImage) {
       const data = new FormData();

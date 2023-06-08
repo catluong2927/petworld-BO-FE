@@ -38,14 +38,24 @@ function EditCenter() {
 
     const toast = useRef(null);
 
+    const [token, setToken] = useState('');
+
     const REGEX = {
         email: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
     };
 
     useEffect(() => {
-        if (centerId) {
+        setToken(currentUser.token)
+    }, [currentUser])
+
+    useEffect(() => {
+        if (centerId && token) {
             axios
-                .get(`${CENTER_API}/${centerId}`)
+                .get(`${CENTER_API}/${centerId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then(res => {
                     setEditCenter(res.data);
                 })
@@ -53,7 +63,7 @@ function EditCenter() {
                     throw err;
                 });
         }
-    }, [centerId]);
+    }, [centerId, token]);
 
     function handleChange(e) {
         setEditCenter({
@@ -103,9 +113,13 @@ function EditCenter() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validateForm()) {
+        if (validateForm() && token) {
             axios
-                .put(`${CENTER_API}/${centerId}`, editCenter)
+                .put(`${CENTER_API}/${centerId}`, editCenter, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((res) => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: 'Create successfully', life: 3000 });
                     window.location.href = '/dashboard/owner/centers';

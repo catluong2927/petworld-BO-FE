@@ -13,6 +13,10 @@ import {
   Divider,
   TextField,
   Unstable_Grid2 as Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import UploadImage from '../components/upload/UploadImage';
 
@@ -41,15 +45,14 @@ function ProductAdd() {
     vitamins: '',
     animal: '',
     sale: '',
-    markDtoRequest: { id: '' },
+    mark: { id: '' },
     image: '',
     imageDetail: [],
   });
 
-
   useEffect(() => {
-    setToken(isLogin.token)
-  }, [isLogin])
+    setToken(isLogin.token);
+  }, [isLogin]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,14 +62,12 @@ function ProductAdd() {
     }));
   };
 
-
   const handleImageChange = (imageUrl) => {
     setProduct((prevProduct) => ({
       ...prevProduct,
       image: imageUrl,
     }));
   };
-  
 
   useEffect(() => {
     if (image1) {
@@ -77,42 +78,40 @@ function ProductAdd() {
       }));
     }
   }, [image1]);
-  
+
   const getMarkHandler = (e) => {
     const { name, value } = e.target;
     setProduct((prevProduct) => ({
       ...prevProduct,
-      markDtoRequest: { id: value },
+      mark: { id: value },
     }));
   };
-  
+  console.log(product);
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
       .post(`${PRODUCT_API}`, product, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((res) => {
         toast.current.show({
           severity: 'success',
           summary: 'Success',
-          detail: 'Create product successfully',
+          detail: `Create ${product.name} successfully`,
           life: 3000,
         });
-        window.location.href = '/dashboard/products';
+        window.location.href = '/dashboard/admin/products';
       })
       .catch((err) => {
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Create product Fail', life: 10000 });
-        window.location.href = '/dashboard/products/add';
+        window.location.href = '/dashboard/admin/products/add';
       });
-    };
+  };
 
-    console.log('test', product)
-    
-    return (
-      <>
+  return (
+    <>
       <Toast ref={toast} />
       <form autoComplete="off" noValidate>
         <Card>
@@ -120,7 +119,7 @@ function ProductAdd() {
           <CardContent sx={{ pt: 0 }}>
             <Box sx={{ m: -1.5 }}>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={4}>
+                <Grid xs={12} md={4}>
                   <TextField
                     fullWidth
                     label="Name"
@@ -131,7 +130,7 @@ function ProductAdd() {
                   />
                 </Grid>
 
-                <Grid item xs={12} md={4}>
+                <Grid xs={12} md={4}>
                   <TextField
                     fullWidth
                     label="Description"
@@ -235,7 +234,7 @@ function ProductAdd() {
                 <Grid xs={12} md={4}>
                   <TextField
                     fullWidth
-                    helperText="Please enter product sale"
+                    helperText="Please enter the discount % of the product"
                     label="Sale"
                     name="sale"
                     type="number"
@@ -246,36 +245,49 @@ function ProductAdd() {
                 </Grid>
 
                 <Grid xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    label="Mark"
-                    name="id"
-                    type="number"
-                    inputProps={{ pattern: '[0-9]*' }}
-                    onChange={(e) => getMarkHandler(e)}
-                    required
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Mark</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Mark"
+                      value={product.mark.id || ''}
+                      onChange={(e) => getMarkHandler(e)}
+                    >
+                      <MenuItem value={1}>None</MenuItem>
+                      <MenuItem value={2}>Offer</MenuItem>
+                      <MenuItem value={3}>Hot</MenuItem>
+                      <MenuItem value={4}>Hot Sale</MenuItem>
+                      <MenuItem value={5}>Sold Out</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
 
                 <Grid xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    label="Category"
-                    name="categoryId"
-                    type="number"
-                    inputProps={{ pattern: '[0-9]*' }}
-                    onChange={(e) => handleChange(e)}
-                    required
-                  />
+                  <FormControl fullWidth required>
+                    <InputLabel id="category-label">Category</InputLabel>
+                    <Select
+                      labelId="category-label"
+                      name="categoryId"
+                      value={product.categoryId || ''}
+                      onChange={(e) => handleChange(e)}
+                    >
+                      <MenuItem value={1}>Milk</MenuItem>
+                      <MenuItem value={2}>Pate</MenuItem>
+                      <MenuItem value={3}>Seed</MenuItem>
+                      <MenuItem value={4}>Vegetable</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
 
                 <Grid xs={12} md={4}>
+
                   <TextField
                     fullWidth
                     helperText="Please choose the product's profile picture"
                     label="Image"
                     name="image"
-                    value={image || ''}
+                    value={product.image || ''}
                     disabled={Boolean(image)}
                     required
                   />
